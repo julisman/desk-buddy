@@ -108,6 +108,12 @@ section {{ break-before: page; }}
 .cover .kicker {{ font-family:"IBM Plex Mono", monospace; color:var(--accent); letter-spacing:.12em; font-size:9pt; text-transform:uppercase; }}
 .cover h1 {{ font-size: 54pt; font-weight:800; margin: 4mm 0; }}
 .cover .sub {{ font-size: 14pt; color: var(--muted); max-width: 120mm; }}
+.hero {{ display:block; height: 118mm; border-radius: 6mm; margin: 6mm 0 0; }}
+.gallery {{ display:grid; grid-template-columns: 1fr 1fr; gap: 6mm 6mm; }}
+.gallery figure {{ margin:0; break-inside: avoid; }}
+.gallery img {{ width:100%; height: 92mm; object-fit: cover; border-radius: 4mm; display:block; }}
+.gallery figcaption {{ font-size: 9pt; color: var(--muted); margin-top: 1.5mm; }}
+.gallery figcaption b {{ color: var(--ink); font-family: "IBM Plex Mono", monospace; font-size: 8.5pt; letter-spacing: .06em; }}
 .face {{ width: 120mm; height: 70mm; background:#0b0b0c; border-radius: 12mm; display:flex; align-items:center; justify-content:center; gap: 14mm; margin: 10mm 0; }}
 .eye {{ width: 22mm; height: 30mm; background: var(--accent); border-radius: 7mm; }}
 .feat {{ display:grid; grid-template-columns: 1fr 1fr; gap: 3mm 8mm; }}
@@ -134,7 +140,7 @@ ol {{ padding-left: 5mm; margin: 0 0 3mm; }} li {{ margin-bottom: 1.6mm; }}
     <div class="kicker">Panduan rakit · v{VERSION}</div>
     <h1>Desk Buddy</h1>
     <p class="sub">Teman kecil di meja: wajah yang berkedip dan senang dielus, focus timer, jam &amp; cuaca, dan monitor Claude Code.</p>
-    <div class="face"><div class="eye"></div><div class="eye"></div></div>
+    <img class="hero" src="img/claude-working.jpg" alt="Desk Buddy menampilkan status Claude Code">
   </div>
   <div class="feat">
     <div><b>Wajah hidup</b>Berkedip, melirik, senang saat knob diputar atau pad dielus.</div>
@@ -144,6 +150,17 @@ ol {{ padding-left: 5mm; margin: 0 0 3mm; }} li {{ margin-bottom: 1.6mm; }}
   </div>
   <p class="meta">Firmware &amp; kode: {REPO_URL} · Installer: {INSTALL_URL}<br>Lisensi CC BY-NC 4.0: bebas untuk non-komersial dengan menyebut sumber.</p>
 </div>
+
+<section>
+  <h2>Kenalan dengan Desk Buddy</h2>
+  <p>Layar 1.69" dengan wajah robot yang hidup. Tahan knob untuk pindah mode.</p>
+  <div class="gallery">
+    <figure><img src="img/claude-working.jpg" alt=""><figcaption><b>CLAUDE · WORKING</b><br>Claude Code sedang bekerja: context, limit sesi dan mingguan, jam reset.</figcaption></figure>
+    <figure><img src="img/claude-idle.jpg" alt=""><figcaption><b>CLAUDE · IDLE</b><br>Sesi menunggu prompt berikutnya. Warna bar: hijau aman, kuning mulai tinggi, merah hampir habis.</figcaption></figure>
+    <figure><img src="img/clock.jpg" alt=""><figcaption><b>CLOCK</b><br>Jam, tanggal, dan cuaca lokasi kamu.</figcaption></figure>
+    <figure><img src="img/focus.jpg" alt=""><figcaption><b>FOCUS</b><br>Pomodoro dengan cincin progres; wajah ikut serius.</figcaption></figure>
+  </div>
+</section>
 
 <section>
   <h2>Daftar komponen</h2>
