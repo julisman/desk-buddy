@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Desk Buddy Installer</title>
+  <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+  <style>
+    :root { --bg: #101113; --panel: #1a1c1f; --fg: #eceef0; --muted: #9aa0a6; --accent: #ff2e4d; --line: #2a2d31; }
+    @media (prefers-color-scheme: light) { :root { --bg: #f6f6f4; --panel: #fff; --fg: #17181a; --muted: #5f6368; --line: #e3e3df; } }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 640px; margin: 0 auto; padding: 40px 18px 64px; }
+    h1 { font-size: 2rem; margin: 0 0 6px; }
+    .lead { color: var(--muted); margin: 0 0 28px; }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; margin-bottom: 22px; }
+    ol { padding-left: 1.3em; margin: 0; display: grid; gap: 10px; }
+    esp-web-install-button button[slot="activate"] { background: var(--accent); color: #fff; border: 0; border-radius: 10px;
+      padding: 14px 26px; font-size: 1.05rem; font-weight: 600; cursor: pointer; }
+    .warn { color: var(--muted); font-size: .92rem; }
+    code { background: var(--line); padding: 1px 6px; border-radius: 5px; }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Desk Buddy</h1>
+  <p class="lead">Install firmware Desk Buddy ke ESP32-S3 langsung dari browser. Tanpa install software, tanpa coding.</p>
+
+  <div class="card">
+    <esp-web-install-button manifest="manifest.json">
+      <button slot="activate">Install Desk Buddy</button>
+      <span slot="unsupported">Browser ini belum bisa. Pakai <b>Google Chrome</b> atau <b>Microsoft Edge</b> di laptop/PC (bukan HP).</span>
+      <span slot="not-allowed">Halaman harus dibuka lewat https.</span>
+    </esp-web-install-button>
+  </div>
+
+  <div class="card">
+    <ol>
+      <li>Rakit dulu sesuai panduan PDF (LCD, knob, buzzer, kabel touch).</li>
+      <li>Colok ESP32-S3 ke laptop pakai kabel USB-C <b>data</b> (bukan kabel cas saja), di port <b>USB</b> (bukan COM).</li>
+      <li>Klik <b>Install Desk Buddy</b>, pilih port yang muncul (biasanya "USB JTAG/serial debug unit"), lalu <b>Install</b>. Tunggu sekitar 1 menit.</li>
+      <li>Tekan tombol <b>RST</b> di board. Layar berkedip merah-hijau-biru, lalu muncul wajah.</li>
+      <li>Di HP, sambung ke WiFi <code>DeskBuddy-XXXX</code> (namanya tampil di layar). Halaman setup terbuka sendiri; kalau tidak, buka <code>192.168.4.1</code>.</li>
+      <li>Pilih WiFi rumah, isi password dan zona waktu, lalu <b>Simpan</b>. Selesai!</li>
+    </ol>
+  </div>
+
+  <p class="warn">Port tidak muncul? Coba kabel lain (banyak kabel USB-C cuma untuk cas), atau tahan tombol <b>BOOT</b>, tekan <b>RST</b>, lepas BOOT, lalu klik Install lagi.
+  Ganti WiFi: tahan knob sambil menyalakan Desk Buddy.</p>
+</main>
+</body>
+</html>

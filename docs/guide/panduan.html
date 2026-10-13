@@ -1,0 +1,220 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Desk Buddy — Panduan Rakit</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+@page { size: A4; margin: 16mm 16mm 18mm; }
+:root { --ink:#1d1f22; --muted:#5f6368; --accent:#e8193c; --line:#e3e3df; --soft:#f6f5f2; }
+* { box-sizing: border-box; }
+body { margin:0; color:var(--ink); font: 10.5pt/1.55 "IBM Plex Sans", system-ui, sans-serif; }
+h1,h2,h3 { font-family: Fraunces, Georgia, serif; line-height:1.15; margin:0; }
+h2 { font-size: 20pt; margin: 0 0 4mm; }
+h3 { font-size: 12.5pt; margin: 5mm 0 2mm; }
+p { margin: 0 0 3mm; }
+section { break-before: page; }
+.cover { height: 255mm; display:flex; flex-direction:column; justify-content:space-between; break-before:auto; }
+.cover .kicker { font-family:"IBM Plex Mono", monospace; color:var(--accent); letter-spacing:.12em; font-size:9pt; text-transform:uppercase; }
+.cover h1 { font-size: 54pt; font-weight:800; margin: 4mm 0; }
+.cover .sub { font-size: 14pt; color: var(--muted); max-width: 120mm; }
+.face { width: 120mm; height: 70mm; background:#0b0b0c; border-radius: 12mm; display:flex; align-items:center; justify-content:center; gap: 14mm; margin: 10mm 0; }
+.eye { width: 22mm; height: 30mm; background: var(--accent); border-radius: 7mm; }
+.feat { display:grid; grid-template-columns: 1fr 1fr; gap: 3mm 8mm; }
+.feat div { border-top: 2px solid var(--ink); padding-top: 2mm; }
+.feat b { display:block; font-family: Fraunces, serif; font-size: 12pt; }
+.meta { font-family:"IBM Plex Mono", monospace; font-size: 8.5pt; color: var(--muted); }
+table { width:100%; border-collapse: collapse; margin: 2mm 0 4mm; font-size: 9.5pt; }
+th { text-align:left; font-size: 7.5pt; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); border-bottom: 1.5px solid var(--ink); padding: 1.5mm 2mm; }
+td { border-bottom: 1px solid var(--line); padding: 1.6mm 2mm; vertical-align: top; }
+tr { break-inside: avoid; }
+code, .mono { font-family: "IBM Plex Mono", monospace; font-size: 9pt; background: var(--soft); padding: 0 1.2mm; border-radius: 1mm; }
+.dot { display:inline-block; width:2.6mm; height:2.6mm; border-radius:50%; margin-right:2mm; vertical-align: 0; }
+.note { background: var(--soft); border-left: 3px solid var(--accent); padding: 3mm 4mm; margin: 3mm 0; break-inside: avoid; }
+ol { padding-left: 5mm; margin: 0 0 3mm; } li { margin-bottom: 1.6mm; }
+.diagram svg { width: 100%; height: auto; }
+.modes { display:grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+.mode { border: 1px solid var(--line); border-radius: 3mm; padding: 3mm 4mm; break-inside: avoid; }
+.mode b { font-family: Fraunces, serif; font-size: 12pt; }
+.total td { font-weight: 600; border-bottom: 0; }
+</style></head><body>
+
+<div class="cover">
+  <div>
+    <div class="kicker">Panduan rakit · v1.0.0</div>
+    <h1>Desk Buddy</h1>
+    <p class="sub">Teman kecil di meja: wajah yang berkedip dan senang dielus, focus timer, jam &amp; cuaca, dan monitor Claude Code.</p>
+    <div class="face"><div class="eye"></div><div class="eye"></div></div>
+  </div>
+  <div class="feat">
+    <div><b>Wajah hidup</b>Berkedip, melirik, senang saat knob diputar atau pad dielus.</div>
+    <div><b>Focus timer</b>Pomodoro 25/5 menit, wajah ikut serius saat fokus.</div>
+    <div><b>Jam &amp; cuaca</b>Sinkron lewat internet, cuaca lokasi kamu.</div>
+    <div><b>Monitor Claude Code</b>Context, limit sesi &amp; mingguan, alarm saat Claude butuh izin.</div>
+  </div>
+  <p class="meta">Firmware &amp; kode: https://github.com/julisman/desk-buddy · Installer: https://julisman.github.io/desk-buddy/<br>Lisensi CC BY-NC 4.0: bebas untuk non-komersial dengan menyebut sumber.</p>
+</div>
+
+<section>
+  <h2>Daftar komponen</h2>
+  <p>Harga perkiraan Shopee (Oktober 2026). Kata kunci bisa langsung dicari di Shopee.</p>
+  <table><thead><tr><th>Komponen</th><th>Kata kunci</th><th>Harga</th><th>Catatan</th></tr></thead><tbody><tr><td>ESP32-S3 N16R8 DevKitC (2 port USB-C)</td><td><span class="mono">esp32 s3 n16r8</span></td><td>Rp85–110rb</td><td>Harus N16R8 (flash 16MB, PSRAM 8MB)</td></tr><tr><td>LCD 1.69" ST7789 240x280 SPI</td><td><span class="mono">lcd 1.69 st7789</span></td><td>Rp40–55rb</td><td>Yang ada pin BLK</td></tr><tr><td>Rotary encoder KY-040</td><td><span class="mono">ky-040 rotary encoder</span></td><td>Rp6–10rb</td><td>Knob putar + tekan</td></tr><tr><td>Buzzer pasif KY-006</td><td><span class="mono">ky-006 buzzer pasif</span></td><td>Rp4–7rb</td><td>Modul 3 pin: S, +, −</td></tr><tr><td>Breadboard 400 lubang</td><td><span class="mono">breadboard 400</span></td><td>Rp8–12rb</td><td>Atau mini breadboard</td></tr><tr><td>Kabel jumper female-male (20 pcs)</td><td><span class="mono">kabel jumper female male</span></td><td>Rp8–12rb</td><td>Sinyal ke pin ESP32</td></tr><tr><td>Kabel jumper male-male (20 pcs)</td><td><span class="mono">kabel jumper male male</span></td><td>Rp8–12rb</td><td>Ke jalur power breadboard</td></tr><tr><td>Kabel USB-C data</td><td><span class="mono">kabel usb c data</span></td><td>Rp15–25rb</td><td>Bukan kabel cas saja</td></tr><tr><td>Copper tape (opsional)</td><td><span class="mono">copper tape</span></td><td>Rp10–15rb</td><td>Pad sentuh untuk dielus</td></tr></tbody></table>
+  <table><tbody><tr class="total"><td>Total perkiraan</td><td style="text-align:right">Rp185–260rb</td></tr></tbody></table>
+  <h3>Alat</h3>
+  <p>Laptop/PC dengan Google Chrome atau Microsoft Edge (untuk install firmware). Tidak perlu solder untuk versi breadboard ini. Opsional: solder untuk header LCD supaya kontaknya awet.</p>
+  <div class="note"><b>Penting:</b> board harus <b>ESP32-S3 N16R8</b>. Varian lain (N8, N8R2, ESP32 biasa) memakai memori berbeda dan firmware ini tidak akan jalan.</div>
+</section>
+
+<section>
+  <h2>Wiring</h2>
+  <p>Semua sinyal ke header kiri ESP32-S3. Listrik dibagi lewat jalur breadboard: pin <b>3V3</b> ke jalur <b>+</b>, pin <b>G</b> ke jalur <b>−</b>.</p>
+  <div class="diagram"><svg viewBox="0 0 760 750" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace">
+<rect x="40" y="50" width="120" height="420" rx="10" fill="#202124"/>
+<text x="100" y="36" text-anchor="middle" font-size="13" fill="#5f6368">ESP32-S3 (header kiri)</text>
+<text x="56" y="80" font-size="13" fill="#fff">3V3</text>
+<text x="56" y="110" font-size="13" fill="#fff">GPIO 4</text>
+<text x="56" y="140" font-size="13" fill="#fff">GPIO 5</text>
+<text x="56" y="170" font-size="13" fill="#fff">GPIO 6</text>
+<text x="56" y="200" font-size="13" fill="#fff">GPIO 7</text>
+<text x="56" y="230" font-size="13" fill="#fff">GPIO 15</text>
+<text x="56" y="260" font-size="13" fill="#fff">GPIO 9</text>
+<text x="56" y="290" font-size="13" fill="#fff">GPIO 10</text>
+<text x="56" y="320" font-size="13" fill="#fff">GPIO 11</text>
+<text x="56" y="350" font-size="13" fill="#fff">GPIO 12</text>
+<text x="56" y="380" font-size="13" fill="#fff">GPIO 13</text>
+<text x="56" y="410" font-size="13" fill="#fff">GPIO 14</text>
+<text x="56" y="440" font-size="13" fill="#fff">G</text>
+<path d="M160 256 H200 V74 H470" fill="none" stroke="#1a73e8" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 286 H211 V104 H470" fill="none" stroke="#1a73e8" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 316 H222 V134 H470" fill="none" stroke="#1a73e8" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 346 H233 V164 H470" fill="none" stroke="#1a73e8" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 376 H244 V194 H470" fill="none" stroke="#1a73e8" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 406 H255 V224 H470" fill="none" stroke="#1a73e8" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 76 H266 V254 H470" fill="none" stroke="#d93025" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 436 H277 V284 H470" fill="none" stroke="#3c4043" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 106 H288 V364 H470" fill="none" stroke="#188038" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 136 H299 V394 H470" fill="none" stroke="#188038" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 166 H310 V424 H470" fill="none" stroke="#188038" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 76 H321 V454 H470" fill="none" stroke="#d93025" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 436 H332 V484 H470" fill="none" stroke="#3c4043" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 226 H343 V564 H470" fill="none" stroke="#b06000" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 76 H354 V594 H470" fill="none" stroke="#d93025" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 436 H365 V624 H470" fill="none" stroke="#3c4043" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 196 H376 V704 H470" fill="none" stroke="#a142f4" stroke-width="2.2" stroke-opacity=".85"/>
+<rect x="470" y="30" width="250" height="274" rx="10" fill="#f1f3f4" stroke="#dadce0"/>
+<text x="484" y="52" font-size="13" font-weight="600" fill="#202124">LCD 1.69&quot; ST7789</text>
+<circle cx="470" cy="74" r="5" fill="#1a73e8"/>
+<text x="484" y="78" font-size="12" fill="#202124">BLK</text>
+<circle cx="470" cy="104" r="5" fill="#1a73e8"/>
+<text x="484" y="108" font-size="12" fill="#202124">CS</text>
+<circle cx="470" cy="134" r="5" fill="#1a73e8"/>
+<text x="484" y="138" font-size="12" fill="#202124">DC</text>
+<circle cx="470" cy="164" r="5" fill="#1a73e8"/>
+<text x="484" y="168" font-size="12" fill="#202124">RES</text>
+<circle cx="470" cy="194" r="5" fill="#1a73e8"/>
+<text x="484" y="198" font-size="12" fill="#202124">SDA</text>
+<circle cx="470" cy="224" r="5" fill="#1a73e8"/>
+<text x="484" y="228" font-size="12" fill="#202124">SCL</text>
+<circle cx="470" cy="254" r="5" fill="#d93025"/>
+<text x="484" y="258" font-size="12" fill="#202124">VCC</text>
+<circle cx="470" cy="284" r="5" fill="#3c4043"/>
+<text x="484" y="288" font-size="12" fill="#202124">GND</text>
+<rect x="470" y="320" width="250" height="184" rx="10" fill="#f1f3f4" stroke="#dadce0"/>
+<text x="484" y="342" font-size="13" font-weight="600" fill="#202124">Knob KY-040</text>
+<circle cx="470" cy="364" r="5" fill="#188038"/>
+<text x="484" y="368" font-size="12" fill="#202124">CLK</text>
+<circle cx="470" cy="394" r="5" fill="#188038"/>
+<text x="484" y="398" font-size="12" fill="#202124">DT</text>
+<circle cx="470" cy="424" r="5" fill="#188038"/>
+<text x="484" y="428" font-size="12" fill="#202124">SW</text>
+<circle cx="470" cy="454" r="5" fill="#d93025"/>
+<text x="484" y="458" font-size="12" fill="#202124">+</text>
+<circle cx="470" cy="484" r="5" fill="#3c4043"/>
+<text x="484" y="488" font-size="12" fill="#202124">GND</text>
+<rect x="470" y="520" width="250" height="124" rx="10" fill="#f1f3f4" stroke="#dadce0"/>
+<text x="484" y="542" font-size="13" font-weight="600" fill="#202124">Buzzer KY-006</text>
+<circle cx="470" cy="564" r="5" fill="#b06000"/>
+<text x="484" y="568" font-size="12" fill="#202124">S</text>
+<circle cx="470" cy="594" r="5" fill="#d93025"/>
+<text x="484" y="598" font-size="12" fill="#202124">+ (tengah)</text>
+<circle cx="470" cy="624" r="5" fill="#3c4043"/>
+<text x="484" y="628" font-size="12" fill="#202124">−</text>
+<rect x="470" y="660" width="250" height="64" rx="10" fill="#f1f3f4" stroke="#dadce0"/>
+<text x="484" y="682" font-size="13" font-weight="600" fill="#202124">Touch pad</text>
+<circle cx="470" cy="704" r="5" fill="#a142f4"/>
+<text x="484" y="708" font-size="12" fill="#202124">kabel / copper tape</text>
+<circle cx="160" cy="76" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="106" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="136" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="166" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="196" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="226" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="256" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="286" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="316" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="346" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="376" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="406" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="436" r="5" fill="#fbbc04"/>
+</svg></div>
+</section>
+
+<section>
+  <h2>Tabel sambungan</h2>
+  <table><thead><tr><th>Modul</th><th>Pin modul</th><th>Sambung ke</th></tr></thead><tbody><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>BLK</td><td>GPIO 9</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>CS</td><td>GPIO 10</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>DC</td><td>GPIO 11</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>RES</td><td>GPIO 12</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>SDA</td><td>GPIO 13</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>SCL</td><td>GPIO 14</td></tr><tr><td><span class="dot" style="background:#d93025"></span>LCD 1.69&quot; ST7789</td><td>VCC</td><td>3V3 (jalur + breadboard)</td></tr><tr><td><span class="dot" style="background:#3c4043"></span>LCD 1.69&quot; ST7789</td><td>GND</td><td>GND (jalur − breadboard)</td></tr><tr><td><span class="dot" style="background:#188038"></span>Knob KY-040</td><td>CLK</td><td>GPIO 4</td></tr><tr><td><span class="dot" style="background:#188038"></span>Knob KY-040</td><td>DT</td><td>GPIO 5</td></tr><tr><td><span class="dot" style="background:#188038"></span>Knob KY-040</td><td>SW</td><td>GPIO 6</td></tr><tr><td><span class="dot" style="background:#d93025"></span>Knob KY-040</td><td>+</td><td>3V3 (jalur + breadboard)</td></tr><tr><td><span class="dot" style="background:#3c4043"></span>Knob KY-040</td><td>GND</td><td>GND (jalur − breadboard)</td></tr><tr><td><span class="dot" style="background:#b06000"></span>Buzzer KY-006</td><td>S</td><td>GPIO 15</td></tr><tr><td><span class="dot" style="background:#d93025"></span>Buzzer KY-006</td><td>+ (tengah)</td><td>3V3 (jalur + breadboard)</td></tr><tr><td><span class="dot" style="background:#3c4043"></span>Buzzer KY-006</td><td>−</td><td>GND (jalur − breadboard)</td></tr><tr><td><span class="dot" style="background:#a142f4"></span>Touch pad</td><td>kabel / copper tape</td><td>GPIO 7</td></tr></tbody></table>
+  <div class="note"><b>Jangan pakai pin 5V.</b> Saat dicolok ke port USB native, pin 5V tidak ada listriknya. Semua modul pakai 3V3.</div>
+  <h3>Langkah rakit</h3>
+  <ol>
+    <li>Cabut USB. Tancap LCD, knob, dan buzzer di breadboard, masing-masing di baris sendiri.</li>
+    <li>Kabel male-male: pin <b>3V3</b> ESP32 ke jalur <b>+</b>, pin <b>G</b> ke jalur <b>−</b>. Lalu VCC/+ tiap modul ke jalur +, GND/− ke jalur −.</li>
+    <li>Kabel female-male: ujung female ke pin ESP32, ujung male ke baris pin modul, sesuai tabel.</li>
+    <li>Touch pad: satu kabel ke GPIO 7. Ujung satunya dibiarkan bebas, atau tempel copper tape 2x2 cm (bisa dari balik casing plastik).</li>
+    <li>Cek sekali lagi: tidak ada kabel ke pin 5V, jalur + dan − tidak tertukar.</li>
+  </ol>
+  <div class="note">LCD tanpa solder: pin header LCD sering kurang nempel. Tancap sedikit miring dan tahan pakai selotip supaya pin menekan dinding lubang.</div>
+</section>
+
+<section>
+  <h2>Install firmware</h2>
+  <p>Tanpa install software. Buka di laptop (Chrome atau Edge):</p>
+  <p style="font-size:14pt"><b class="mono" style="font-size:12pt">https://julisman.github.io/desk-buddy/</b></p>
+  <ol>
+    <li>Colok ESP32-S3 ke laptop pakai kabel USB-C <b>data</b>, di port <b>USB</b> (bukan COM).</li>
+    <li>Klik <b>Install Desk Buddy</b>, pilih port yang muncul (biasanya "USB JTAG/serial debug unit"), lalu <b>Install</b>. Tunggu sekitar 1 menit.</li>
+    <li>Tekan tombol <b>RST</b> di board. Layar berkedip merah-hijau-biru lalu muncul wajah.</li>
+  </ol>
+  <h3>Sambungkan ke WiFi</h3>
+  <ol>
+    <li>Di bawah layar muncul nama hotspot, misalnya <span class="mono">DeskBuddy-1A2B</span>.</li>
+    <li>Di HP, buka pengaturan WiFi dan sambung ke hotspot itu. Halaman setup terbuka sendiri; kalau tidak, buka <span class="mono">192.168.4.1</span>.</li>
+    <li>Pilih WiFi rumah, isi password, pilih zona waktu (WIB/WITA/WIT), lalu <b>Simpan</b>. Desk Buddy restart dan tersambung.</li>
+  </ol>
+  <div class="note">Ganti WiFi / pindah rumah: tahan knob sambil menyalakan Desk Buddy sampai muncul "WiFi direset". Kalau WiFi tersimpan gagal tersambung, hotspot setup juga terbuka sendiri.</div>
+  <p>Mau ubah kode? Source code lengkap ada di <span class="mono">https://github.com/julisman/desk-buddy</span> (PlatformIO).</p>
+</section>
+
+<section>
+  <h2>Cara pakai</h2>
+  <p><b>Tahan knob</b> (± 1 detik) untuk ganti mode. <b>Elus</b> pad sentuh kapan saja: wajah senang, keluar hati, bunyi "purr".</p>
+  <div class="modes">
+    <div class="mode"><b>FACE</b><br>Putar = dielus (senang, melirik). Tekan = boop (kaget).</div>
+    <div class="mode"><b>FOCUS</b><br>Putar = atur menit. Tekan = mulai / jeda. Fokus 25 menit lalu istirahat 5 menit otomatis.</div>
+    <div class="mode"><b>CLOCK</b><br>Jam, tanggal, dan cuaca lokasi kamu.</div>
+    <div class="mode"><b>CLAUDE</b><br>Status Claude Code dari laptop. Putar = pindah sesi. Tekan = diamkan alarm.</div>
+  </div>
+  <p style="margin-top:4mm">Tidak disentuh 5 menit (malam 23:00–07:00: 1 menit): Desk Buddy tidur dan layar redup. Sentuh knob untuk membangunkan.</p>
+
+  <h3>Mode CLAUDE (untuk pengguna Claude Code)</h3>
+  <p>Desk Buddy menampilkan model, context %, limit sesi (5 jam) dan mingguan beserta jam reset, dan status: <b>WORKING</b>, <b>NEEDS YOU</b> (alarm + bingkai merah saat Claude minta izin), <b>DONE</b>. Bisa memantau sampai 4 sesi sekaligus.</p>
+  <ol>
+    <li>Laptop dan Desk Buddy di WiFi yang sama. Butuh <span class="mono">jq</span> (<span class="mono">brew install jq</span>).</li>
+    <li>Download source code dari https://github.com/julisman/desk-buddy, lalu jalankan <span class="mono">tools/install-claude-hooks.sh</span>. Lepas lagi: <span class="mono">--uninstall</span>.</li>
+    <li>Buka sesi Claude Code baru. Coba tanpa Claude: <span class="mono">tools/claude-desk-buddy.sh demo</span>.</li>
+  </ol>
+  <p>Yang dikirim ke Desk Buddy cuma angka dan status. Prompt dan balasan Claude tidak pernah keluar dari laptop.</p>
+</section>
+
+<section>
+  <h2>Kalau ada masalah</h2>
+  <table><thead><tr><th>Gejala</th><th>Solusi</th></tr></thead><tbody><tr><td>Layar menyala tapi abu-abu / putih polos</td><td>Kabel data LCD (SDA, SCL, CS, DC, RES) tidak nempel. Tancap ulang, miringkan sedikit header LCD di breadboard, tahan pakai selotip, tekan RST. Solder header LCD = solusi permanen.</td></tr><tr><td>Layar mati total</td><td>VCC LCD harus ke 3V3, bukan 5V (pin 5V tidak ada listrik saat colok USB native).</td></tr><tr><td>Board restart terus saat bunyi</td><td>Cek kabel buzzer: S ke GPIO 15, + ke 3V3, − ke GND. Firmware sudah memakai volume kecil supaya aman.</td></tr><tr><td>Port tidak muncul saat install</td><td>Ganti kabel USB-C (banyak yang cuma untuk cas). Coba port USB yang satunya. Atau tahan BOOT, tekan RST, lepas BOOT.</td></tr><tr><td>Knob kebalik / loncat 2</td><td>Tukar kabel CLK dan DT. Kalau 1 klik = 2 langkah, beri tahu kami (setting firmware).</td></tr><tr><td>Jam / cuaca tidak muncul</td><td>WiFi belum tersambung. Tahan knob sambil menyalakan untuk setup ulang WiFi.</td></tr><tr><td>Elus tidak terasa</td><td>Jangan sentuh pad saat Desk Buddy menyala (kalibrasi). Pakai kabel pendek dan pad lebih lebar (copper tape 2x2 cm).</td></tr></tbody></table>
+  <h3>Berikutnya</h3>
+  <p><b>Phase 2:</b> baterai LiPo + charger Type-C (bisa dibawa ke mana-mana, ikon baterai) dan suara: ngobrol dengan Desk Buddy lewat mic dan speaker, dijawab AI dari laptop kamu.</p>
+  <p class="meta" style="margin-top:8mm">Desk Buddy v1.0.0 · https://github.com/julisman/desk-buddy · CC BY-NC 4.0</p>
+</section>
+</body></html>
