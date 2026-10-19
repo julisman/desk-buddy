@@ -1,14 +1,14 @@
-// display.h — ST7789 + frame buffer penuh di PSRAM + backlight PWM.
+// display.h — ST7789 + full frame buffer in PSRAM + PWM backlight.
 #pragma once
 
 #include <TFT_eSPI.h>
 
-// Backlight, init TFT, tes warna merah-hijau-biru, alokasi frame buffer.
+// Backlight, TFT init, red-green-blue color test, frame buffer allocation.
 void displayInit();
 
-// Frame buffer 240x280 (gambar di sini, lalu displayPush) -> tanpa flicker
+// 240x280 frame buffer (draw here, then displayPush) -> no flicker
 TFT_eSprite &displayCanvas();
 void displayPush();
 
-// Panggil tiap frame: backlight fade halus ke level 0..255
+// Call every frame: backlight fades smoothly to level 0..255
 void displayFadeTo(uint8_t level);

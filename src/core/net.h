@@ -1,8 +1,8 @@
-// net.h — WiFi + NTP + cuaca (Open-Meteo), jalan di task terpisah (core 0)
-// supaya request HTTP tidak bikin animasi patah-patah.
+// net.h — WiFi + NTP + weather (Open-Meteo), runs in a separate task (core 0)
+// so HTTP requests don't make the animation stutter.
 //
-// Belum ada WiFi tersimpan (atau WiFi tersimpan gagal connect): buka hotspot
-// "DeskBuddy-XXXX" dengan halaman setup di http://192.168.4.1 (WiFi, zona waktu, lokasi).
+// No saved WiFi yet (or saved WiFi fails to connect): open hotspot
+// "DeskBuddy-XXXX" with a setup page at http://192.168.4.1 (WiFi, time zone, location).
 #pragma once
 
 #include <stdint.h>
@@ -22,9 +22,9 @@ inline bool netConnected() { return netStatus() == NetStatus::SyncingTime || net
 Weather netWeather();
 const char *weatherText(int code);
 
-// Hotspot setup sedang terbuka? (bisa bareng Connecting kalau WiFi tersimpan gagal)
+// Is the setup hotspot open? (can overlap with Connecting if saved WiFi fails)
 bool netSetupActive();
 const char *netSetupApName();  // "DeskBuddy-1A2B"
 
-// Hapus WiFi tersimpan (tahan knob saat dinyalakan). Berlaku setelah restart.
+// Forget saved WiFi (hold the knob at power-on). Takes effect after restart.
 void netForgetWifi();

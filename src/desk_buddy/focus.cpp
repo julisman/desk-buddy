@@ -1,5 +1,5 @@
-// focus.cpp — Pomodoro. Fokus selesai -> istirahat otomatis jalan.
-// Istirahat selesai -> balik ke fokus, menunggu tombol ditekan.
+// focus.cpp — Pomodoro. Focus done -> break starts automatically.
+// Break done -> back to focus, waiting for a button press.
 #include "focus.h"
 
 #include <Arduino.h>
@@ -11,8 +11,8 @@ static FocusPhase phase = FocusPhase::Work;
 static FocusState state = FocusState::Idle;
 static int workMin = FOCUS_DEFAULT_MIN;
 static int breakMin = BREAK_DEFAULT_MIN;
-static uint32_t remainingMs = 0;  // valid saat Idle/Paused
-static uint32_t endMs = 0;        // valid saat Running
+static uint32_t remainingMs = 0;  // valid when Idle/Paused
+static uint32_t endMs = 0;        // valid when Running
 static int completed = 0;
 
 static uint32_t phaseTotalMs() {
@@ -42,7 +42,7 @@ void focusClick() {
     case FocusState::Running:
       remainingMs = endMs - millis();
       state = FocusState::Paused;
-      LOG("[focus] pause, sisa %lu s\n", remainingMs / 1000);
+      LOG("[focus] pause, %lu s left\n", remainingMs / 1000);
       break;
   }
 }
@@ -52,7 +52,7 @@ void focusTurn(int delta) {
   int &minutes = phase == FocusPhase::Work ? workMin : breakMin;
   int maxMin = phase == FocusPhase::Work ? FOCUS_MAX_MIN : BREAK_MAX_MIN;
   minutes = constrain(minutes + delta, 1, maxMin);
-  resetPhase(phase);  // putar saat pause = set ulang durasi
+  resetPhase(phase);  // turning while paused = reset duration
 }
 
 FocusEvent focusUpdate(uint32_t now) {
@@ -60,12 +60,12 @@ FocusEvent focusUpdate(uint32_t now) {
 
   if (phase == FocusPhase::Work) {
     completed++;
-    LOG("[focus] work selesai (%d sesi), mulai break\n", completed);
+    LOG("[focus] work done (%d sessions), starting break\n", completed);
     resetPhase(FocusPhase::Break);
     start();
     return FocusEvent::WorkDone;
   }
-  LOG("[focus] break selesai\n");
+  LOG("[focus] break done\n");
   resetPhase(FocusPhase::Work);
   return FocusEvent::BreakDone;
 }

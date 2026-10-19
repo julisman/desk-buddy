@@ -1,42 +1,42 @@
 #!/bin/bash
-# Salin Desk Buddy ke repo publik (github.com/julisman/desk-buddy) TANPA app privat, lalu commit.
-# Repo ini (lengkap, termasuk src/pet/) tetap privat/lokal; repo publik punya history sendiri.
+# Copy Desk Buddy to the public repo (github.com/julisman/desk-buddy) WITHOUT the private app, then commit.
+# This repo (complete, including src/pet/) stays private/local; the public repo has its own history.
 #
-#   tools/publish-public.sh "pesan commit"
-#   cd ../desk-buddy-public && git push          # push manual setelah dicek
+#   tools/publish-public.sh "commit message"
+#   cd ../desk-buddy-public && git push          # push manually after checking
 #
-# Folder repo publik: ../desk-buddy-public (ubah dengan PUBLIC_DIR=...).
+# Public repo folder: ../desk-buddy-public (change with PUBLIC_DIR=...).
 set -euo pipefail
 SRC="$(cd "$(dirname "$0")/.." && pwd)"
 DST="${PUBLIC_DIR:-$SRC/../desk-buddy-public}"
-MSG="${1:?pesan commit wajib, contoh: tools/publish-public.sh \"v1.0.1: perbaikan touch\"}"
+MSG="${1:?commit message required, e.g.: tools/publish-public.sh \"v1.0.1: touch fix\"}"
 
-[ -d "$DST/.git" ] || { echo "repo publik tidak ada di $DST (git clone dulu)" >&2; exit 1; }
+[ -d "$DST/.git" ] || { echo "public repo not found at $DST (git clone it first)" >&2; exit 1; }
 
-# Yang TIDAK boleh ke publik: app privat, secrets, build output
+# What must NOT go public: private app, secrets, build output
 rsync -a --delete \
-  --exclude '.git/' --exclude '.pio/' --exclude '.vscode/' --exclude '.DS_Store' \
+  --exclude '.git' --exclude '.pio/' --exclude '.vscode/' --exclude '.DS_Store' \
   --exclude 'src/secrets.h' --exclude 'src/pet/' --exclude '*.app.ini' \
   "$SRC/" "$DST/"
 
 cd "$DST"
 fail() { echo "STOP: $1" >&2; exit 1; }
-[ ! -e src/secrets.h ] || fail "src/secrets.h ikut tersalin"
-[ ! -e src/pet ] || fail "src/pet ikut tersalin"
+[ ! -e src/secrets.h ] || fail "src/secrets.h was copied"
+[ ! -e src/pet ] || fail "src/pet was copied"
 if [ -f "$SRC/src/secrets.h" ]; then
   for key in WIFI_SSID WIFI_PASSWORD; do
     val=$(sed -nE "s/^#define $key +\"([^\"]+)\".*/\1/p" "$SRC/src/secrets.h")
-    [ -z "$val" ] || ! grep -rqaF --exclude-dir=.git -e "$val" . || fail "$key dari secrets.h ada di repo publik"
+    [ -z "$val" ] || ! grep -rqaF --exclude-dir=.git -e "$val" . || fail "$key from secrets.h is in the public repo"
   done
 fi
-# (script ini sendiri menyebut src/pet di daftar exclude, jadi dilewati)
-! grep -rqE --exclude-dir=.git --exclude=publish-public.sh 'pet_config|src/pet|env:pet' . || fail "masih ada referensi app pet"
+# (this script itself names src/pet in its exclude list, so it is skipped)
+! grep -rqE --exclude-dir=.git --exclude=publish-public.sh 'pet_config|src/pet|env:pet' . || fail "references to the pet app remain"
 
 git add -A
 if git diff --cached --quiet; then
-  echo "tidak ada perubahan"
+  echo "no changes"
 else
   git commit -q -m "$MSG"
   echo "commit: $(git log --oneline -1)"
-  echo "cek lalu push: cd $DST && git push"
+  echo "check, then push: cd $DST && git push"
 fi

@@ -1,4 +1,4 @@
-// net.cpp — WiFi STA, hotspot setup, sync jam via NTP, cuaca dari Open-Meteo (tanpa API key).
+// net.cpp — WiFi STA, setup hotspot, clock sync via NTP, weather from Open-Meteo (no API key).
 #include "net.h"
 
 #include <Arduino.h>
@@ -20,9 +20,9 @@ static std::mutex netMutex;
 static Weather weather;
 static volatile NetStatus status = NetStatus::Connecting;
 
-static const time_t VALID_EPOCH = 1700000000;  // waktu sebelum ini = belum sync
+static const time_t VALID_EPOCH = 1700000000;  // time before this = not synced yet
 
-// Setting yang diisi lewat halaman setup (NVS "net"), default dari board.h / secrets.h
+// Settings filled in via the setup page (NVS "net"), defaults from board.h / secrets.h
 struct NetConfig {
   String ssid, pass, tz;
   float lat, lon;
@@ -31,7 +31,7 @@ static NetConfig cfg;
 
 static void loadConfig() {
   Preferences p;
-  p.begin("net", false);  // read-write: buat namespace kalau belum ada (read-only = log error)
+  p.begin("net", false);  // read-write: creates the namespace if missing (read-only = error log)
   cfg.ssid = p.getString("ssid", WIFI_SSID);
   cfg.pass = p.getString("pass", WIFI_PASSWORD);
   cfg.tz = p.getString("tz", TZ_INFO);
@@ -45,17 +45,17 @@ void netForgetWifi() {
   p.begin("net", false);
   p.clear();
   p.end();
-  LOG("[wifi] setting WiFi dihapus\n");
+  LOG("[wifi] WiFi settings cleared\n");
 }
 
 bool netTimeValid() { return time(nullptr) > VALID_EPOCH; }
 
-// ---------- Hotspot setup ----------
+// ---------- Setup hotspot ----------
 
 static DNSServer dns;
 static WebServer *portal = nullptr;
 static char apName[24] = "";
-static String scanOptions;  // <option> hasil scan WiFi, dibuat sebelum hotspot nyala
+static String scanOptions;  // <option> list from the WiFi scan, built before the hotspot starts
 
 bool netSetupActive() { return portal != nullptr; }
 const char *netSetupApName() { return apName; }
@@ -83,7 +83,7 @@ static void scanNetworks() {
   WiFi.scanDelete();
 }
 
-static const char PAGE_HEAD[] PROGMEM = R"(<!doctype html><html><head><meta charset="utf-8">
+static const char PAGE_HEAD[] PROGMEM = R"(<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>Desk Buddy</title>
 <style>body{font-family:system-ui,sans-serif;background:#111;color:#eee;margin:0;padding:24px;max-width:420px}
 h1{font-size:22px;margin:0 0 4px}p{color:#aaa;margin:0 0 20px}label{display:block;margin:14px 0 6px;font-size:14px}
@@ -93,21 +93,21 @@ button{margin-top:22px;width:100%;padding:14px;border:0;border-radius:10px;backg
 
 static void handleRoot() {
   String page = FPSTR(PAGE_HEAD);
-  page += "<h1>Desk Buddy</h1><p>Sambungkan Desk Buddy ke WiFi rumah kamu.</p>"
+  page += "<h1>Desk Buddy</h1><p>Connect Desk Buddy to your home WiFi.</p>"
           "<form method=post action=/save>"
-          "<label for=s>Nama WiFi</label><input id=s name=ssid list=nets required value=\"" +
+          "<label for=s>WiFi name</label><input id=s name=ssid list=nets required value=\"" +
           htmlEscape(cfg.ssid) + "\"><datalist id=nets>" + scanOptions +
           "</datalist>"
           "<label for=p>Password</label><input id=p name=pass type=password>"
-          "<label for=t>Zona waktu</label><select id=t name=tz>";
+          "<label for=t>Time zone</label><select id=t name=tz>";
   const char *zones[][2] = {{"WIB-7", "WIB (UTC+7)"}, {"WITA-8", "WITA (UTC+8)"}, {"WIT-9", "WIT (UTC+9)"}};
   for (auto &z : zones) {
     page += String("<option value=") + z[0] + (cfg.tz == z[0] ? " selected>" : ">") + z[1] + "</option>";
   }
-  page += "</select><label>Lokasi cuaca <small>(latitude, longitude; default Jakarta)</small></label>"
+  page += "</select><label>Weather location <small>(latitude, longitude; default Jakarta)</small></label>"
           "<div class=row><div><input name=lat inputmode=decimal value=\"" + String(cfg.lat, 4) +
           "\"></div><div><input name=lon inputmode=decimal value=\"" + String(cfg.lon, 4) +
-          "\"></div></div><button>Simpan &amp; sambungkan</button></form></body></html>";
+          "\"></div></div><button>Save &amp; connect</button></form></body></html>";
   portal->send(200, "text/html", page);
 }
 
@@ -115,7 +115,7 @@ static void handleSave() {
   String ssid = portal->arg("ssid");
   ssid.trim();
   if (ssid.isEmpty()) {
-    portal->send(400, "text/plain", "Nama WiFi wajib diisi");
+    portal->send(400, "text/plain", "WiFi name is required");
     return;
   }
   Preferences p;
@@ -131,10 +131,10 @@ static void handleSave() {
   }
   p.end();
   String page = FPSTR(PAGE_HEAD);
-  page += "<h1>Tersimpan</h1><p>Desk Buddy restart dan menyambung ke <b>" + htmlEscape(ssid) +
-          "</b>. Hotspot ini akan hilang; sambungkan HP kembali ke WiFi biasa.</p></body></html>";
+  page += "<h1>Saved</h1><p>Desk Buddy is restarting and joining <b>" + htmlEscape(ssid) +
+          "</b>. This hotspot will disappear; reconnect your phone to your usual WiFi.</p></body></html>";
   portal->send(200, "text/html", page);
-  LOG("[setup] WiFi \"%s\" tersimpan, restart\n", ssid.c_str());
+  LOG("[setup] WiFi \"%s\" saved, restarting\n", ssid.c_str());
   delay(1500);
   ESP.restart();
 }
@@ -143,22 +143,22 @@ static uint32_t portalStartMs = 0;
 
 static void startPortal() {
   if (portal) return;
-  WiFi.disconnect();     // berhenti mencoba WiFi tersimpan: retry STA lompat-lompat channel
-  WiFi.mode(WIFI_STA);   // dan bikin HP yang tersambung ke hotspot putus
+  WiFi.disconnect();     // stop trying the saved WiFi: STA retries hop between channels
+  WiFi.mode(WIFI_STA);   // and drop phones connected to the hotspot
   uint8_t mac[6];
   WiFi.macAddress(mac);
   snprintf(apName, sizeof(apName), "%s%02X%02X", SETUP_AP_PREFIX, mac[4], mac[5]);
 
-  scanNetworks();  // scan dulu: selama AP nyala scan bisa mengganggu klien
+  scanNetworks();  // scan first: scanning while the AP is up can disrupt clients
   WiFi.mode(WIFI_AP);
   WiFi.softAP(apName);
   portalStartMs = millis();
-  dns.start(53, "*", WiFi.softAPIP());  // semua domain -> halaman setup (captive portal)
+  dns.start(53, "*", WiFi.softAPIP());  // every domain -> setup page (captive portal)
 
   portal = new WebServer(80);
   portal->on("/", HTTP_GET, handleRoot);
   portal->on("/save", HTTP_POST, handleSave);
-  portal->onNotFound([] {  // HP cek "internet?" ke URL lain -> arahkan ke setup
+  portal->onNotFound([] {  // phone checks "internet?" via other URLs -> redirect to setup
     portal->sendHeader("Location", "http://192.168.4.1/");
     portal->send(302, "text/plain", "");
   });
@@ -174,10 +174,10 @@ static void stopPortal() {
   dns.stop();
   WiFi.softAPdisconnect(true);
   WiFi.mode(WIFI_STA);
-  LOG("[setup] hotspot ditutup\n");
+  LOG("[setup] hotspot closed\n");
 }
 
-// ---------- Cuaca ----------
+// ---------- Weather ----------
 
 static bool fetchWeather() {
   char url[200];
@@ -200,7 +200,7 @@ static bool fetchWeather() {
 
   JsonDocument doc;
   if (deserializeJson(doc, body)) {
-    LOG("[weather] JSON tidak valid\n");
+    LOG("[weather] invalid JSON\n");
     return false;
   }
   Weather w;
@@ -227,7 +227,7 @@ static void netTask(void *) {
   } else {
     WiFi.mode(WIFI_STA);
     WiFi.begin(cfg.ssid.c_str(), cfg.pass.c_str());
-    LOG("[wifi] connect ke \"%s\"\n", cfg.ssid.c_str());
+    LOG("[wifi] connecting to \"%s\"\n", cfg.ssid.c_str());
   }
 
   bool wasConnected = false;
@@ -241,11 +241,11 @@ static void netTask(void *) {
       portal->handleClient();
     }
 
-    // Hotspot karena WiFi tersimpan gagal, tapi tidak ada yang buka: restart & coba lagi
-    // (mungkin router cuma mati sebentar)
+    // Hotspot opened because saved WiFi failed, but nobody visited: restart & try again
+    // (the router may have just been down briefly)
     if (portal && !cfg.ssid.isEmpty() && WiFi.softAPgetStationNum() == 0 &&
         millis() - portalStartMs > SETUP_RETRY_MS) {
-      LOG("[setup] tidak ada yang setup, restart untuk coba WiFi lagi\n");
+      LOG("[setup] nobody ran setup, restarting to retry WiFi\n");
       ESP.restart();
     }
 
@@ -263,14 +263,14 @@ static void netTask(void *) {
           LOG("[mdns] http://%s.local\n", NET_HOSTNAME);
         }
       } else {
-        LOG("[wifi] terputus, reconnect otomatis\n");
+        LOG("[wifi] disconnected, auto-reconnecting\n");
       }
     }
 
-    // WiFi tersimpan tidak pernah berhasil (password salah / pindah rumah): buka setup
+    // Saved WiFi never worked (wrong password / moved house): open setup
     if (!connected && !everConnected && !portal && !cfg.ssid.isEmpty() &&
         millis() - startMs > SETUP_FALLBACK_MS) {
-      LOG("[wifi] gagal connect ke \"%s\", buka hotspot setup\n", cfg.ssid.c_str());
+      LOG("[wifi] failed to connect to \"%s\", opening setup hotspot\n", cfg.ssid.c_str());
       startPortal();
     }
 
@@ -288,7 +288,7 @@ static void netTask(void *) {
 
 void netInit() {
   loadConfig();
-  // Core 0 (bareng WiFi stack); loop() + animasi jalan di core 1
+  // Core 0 (with the WiFi stack); loop() + animation run on core 1
   xTaskCreatePinnedToCore(netTask, "net", 8192, nullptr, 1, nullptr, 0);
 }
 

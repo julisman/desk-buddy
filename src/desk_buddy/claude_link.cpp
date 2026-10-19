@@ -1,4 +1,4 @@
-// claude_link.cpp — HTTP server penerima status Claude Code (lihat claude_link.h).
+// claude_link.cpp — HTTP server that receives Claude Code status (see claude_link.h).
 #include "claude_link.h"
 
 #include <Arduino.h>
@@ -19,13 +19,13 @@ struct Session {
   char tool[24] = "";
   float ctxPct = -1;
   ClaudeActivity activity = ClaudeActivity::None;
-  uint32_t turnStartMs = 0;  // millis() saat prompt terakhir dikirim
+  uint32_t turnStartMs = 0;  // millis() when the last prompt was sent
   uint32_t updatedMs = 0;
 };
 
-static std::mutex stateMutex;  // handler jalan di task httpd, dibaca dari loop()
+static std::mutex stateMutex;  // handlers run in the httpd task, read from loop()
 static Session sessions[CLAUDE_MAX_SESSIONS];
-static int selected = -1;      // slot sesi yang tampil
+static int selected = -1;      // session slot being shown
 static bool valid = false;
 static float sessionPct = -1, weekPct = -1;
 static uint32_t sessionResets = 0, weekResets = 0;
@@ -40,7 +40,7 @@ static void readNum(float &dst, JsonVariantConst v) {
   if (!v.isNull()) dst = v.as<float>();
 }
 
-// ---- Slot sesi (semua fungsi di bawah dipanggil dengan stateMutex terkunci) ----
+// ---- Session slots (all functions below are called with stateMutex held) ----
 
 static int mostRecentSlot() {
   int best = -1;
@@ -56,7 +56,7 @@ static void removeSlot(int slot) {
   if (selected == slot) selected = mostRecentSlot();
 }
 
-// Sesi tanpa kabar lama dianggap sudah ditutup (SessionEnd bisa terlewat kalau laptop tidur)
+// Sessions silent for a long time are treated as closed (SessionEnd can be missed if the laptop sleeps)
 static void pruneStale(uint32_t now) {
   for (int i = 0; i < CLAUDE_MAX_SESSIONS; i++) {
     if (sessions[i].used && now - sessions[i].updatedMs > CLAUDE_SESSION_TIMEOUT_MS) removeSlot(i);
@@ -71,7 +71,7 @@ static int findOrCreate(const char *id, uint32_t now) {
   for (int i = 0; i < CLAUDE_MAX_SESSIONS && slot < 0; i++) {
     if (!sessions[i].used) slot = i;
   }
-  if (slot < 0) {  // penuh: ganti yang paling lama diam
+  if (slot < 0) {  // full: replace the one idle the longest
     slot = 0;
     for (int i = 1; i < CLAUDE_MAX_SESSIONS; i++) {
       if (now - sessions[i].updatedMs > now - sessions[slot].updatedMs) slot = i;
@@ -81,7 +81,7 @@ static int findOrCreate(const char *id, uint32_t now) {
   sessions[slot].used = true;
   strlcpy(sessions[slot].id, id, sizeof(sessions[slot].id));
   if (selected < 0 || !sessions[selected].used) selected = slot;
-  LOG("[claude] sesi baru di slot %d\n", slot);
+  LOG("[claude] new session in slot %d\n", slot);
   return slot;
 }
 
@@ -102,16 +102,16 @@ static void applyHook(int slot, JsonDocument &doc, uint32_t now) {
     if (s.activity != ClaudeActivity::NeedsYou) pendingEvents |= CLAUDE_EV_NEEDS_YOU;
     copyStr(s.tool, sizeof(s.tool), doc["tool"]);
     s.activity = ClaudeActivity::NeedsYou;
-    selected = slot;  // tampilkan sesi yang butuh kamu
+    selected = slot;  // show the session that needs you
   } else if (strcmp(event, "UserPromptSubmit") == 0) {
     pendingEvents |= CLAUDE_EV_WORKING;
     s.turnStartMs = now;
     s.activity = ClaudeActivity::Working;
-    selected = slot;  // sesi yang baru kamu ketik
+    selected = slot;  // the session you just typed in
   } else if (strcmp(event, "PostToolUse") == 0) {
-    s.activity = ClaudeActivity::Working;  // tool jalan = izin sudah diberi / masih kerja
+    s.activity = ClaudeActivity::Working;  // tool ran = permission granted / still working
   } else if (strcmp(event, "Stop") == 0) {
-    // Diukur dari prompt (bukan dari izin terakhir), jadi tugas panjang tetap dapat bunyi
+    // Measured from the prompt (not the last permission), so long tasks still get the sound
     if (s.activity == ClaudeActivity::Working && s.turnStartMs && now - s.turnStartMs >= CLAUDE_CHIRP_MIN_MS) {
       pendingEvents |= CLAUDE_EV_DONE;
     }
@@ -129,7 +129,7 @@ static void applyStatus(int slot, JsonDocument &doc) {
   Session &s = sessions[slot];
   copyStr(s.model, sizeof(s.model), doc["model"]);
   readNum(s.ctxPct, doc["ctx"]);
-  // Limit milik akun: nilai terbaru dari sesi mana pun
+  // Limits belong to the account: latest value from any session
   readNum(sessionPct, doc["session_pct"]);
   readNum(weekPct, doc["week_pct"]);
   if (!doc["session_resets"].isNull()) sessionResets = doc["session_resets"].as<uint32_t>();
@@ -169,7 +169,7 @@ static esp_err_t postHandler(httpd_req_t *req) {
       for (int i = 0; i < CLAUDE_MAX_SESSIONS; i++) {
         if (sessions[i].used && strcmp(sessions[i].id, id) == 0) {
           removeSlot(i);
-          LOG("[claude] slot %d selesai (SessionEnd)\n", i);
+          LOG("[claude] slot %d ended (SessionEnd)\n", i);
         }
       }
     } else {
@@ -185,7 +185,7 @@ static esp_err_t postHandler(httpd_req_t *req) {
   return httpd_resp_sendstr(req, "{\"ok\":true}");
 }
 
-// GET /claude: lihat state sekarang (debug dari laptop)
+// GET /claude: view current state (debug from the laptop)
 static esp_err_t getHandler(httpd_req_t *req) {
   char json[1024];
   int n;
@@ -217,9 +217,9 @@ void claudeLinkStart() {
   if (server) return;
   httpd_config_t config = HTTPD_DEFAULT_CONFIG();
   config.server_port = 80;
-  config.stack_size = 6144;  // JsonDocument + buffer body di stack handler
+  config.stack_size = 6144;  // JsonDocument + body buffer on the handler stack
   if (httpd_start(&server, &config) != ESP_OK) {
-    LOG("[claude] server gagal start\n");
+    LOG("[claude] server failed to start\n");
     server = nullptr;
     return;
   }
@@ -234,7 +234,7 @@ void claudeLinkStart() {
   get.method = HTTP_GET;
   get.handler = getHandler;
   httpd_register_uri_handler(server, &get);
-  LOG("[claude] server siap: POST http://%s.local/claude\n", NET_HOSTNAME);
+  LOG("[claude] server ready: POST http://%s.local/claude\n", NET_HOSTNAME);
 }
 
 bool claudeLinkStarted() { return server != nullptr; }

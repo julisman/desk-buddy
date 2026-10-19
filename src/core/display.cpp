@@ -1,4 +1,4 @@
-// display.cpp — lihat display.h
+// display.cpp — see display.h
 #include "display.h"
 
 #include <Arduino.h>
@@ -6,7 +6,7 @@
 #include "board.h"
 #include "log.h"
 
-// Static lokal: aman dipakai dari initializer global di file lain
+// Local static: safe to use from global initializers in other files
 static TFT_eSPI &tft() {
   static TFT_eSPI t;
   return t;
@@ -26,8 +26,8 @@ void displayInit() {
 
   tft().init();
   tft().setRotation(SCREEN_ROTATION);
-  // Tes warna singkat: kalau layar tidak berkedip merah-hijau-biru, data SPI tidak sampai
-  // (cek kabel SDA/SCL/CS/DC/RES dan solderan header LCD).
+  // Quick color test: if the screen doesn't flash red-green-blue, SPI data isn't arriving
+  // (check the SDA/SCL/CS/DC/RES wires and the LCD header solder joints).
   const uint16_t testColors[] = {TFT_RED, TFT_GREEN, TFT_BLUE};
   ledcWrite(BL_PWM_CH, BL_BRIGHT);
   for (uint16_t c : testColors) {
@@ -36,18 +36,18 @@ void displayInit() {
   }
   tft().fillScreen(COLOR_BG);
   brightness = BL_BRIGHT;
-  LOG("[boot] display test merah-hijau-biru selesai\n");
+  LOG("[boot] display red-green-blue test done\n");
 
   TFT_eSprite &canvas = displayCanvas();
   canvas.setColorDepth(16);
   if (!canvas.createSprite(SCREEN_W, SCREEN_H)) {
-    LOG("[boot] ERROR: gagal alokasi frame buffer (PSRAM?)\n");
+    LOG("[boot] ERROR: failed to allocate frame buffer (PSRAM?)\n");
   }
 }
 
 void displayPush() { displayCanvas().pushSprite(0, 0); }
 
 void displayFadeTo(uint8_t level) {
-  brightness += (level - brightness) * 0.08f;  // fade halus
+  brightness += (level - brightness) * 0.08f;  // smooth fade
   ledcWrite(BL_PWM_CH, (uint32_t)brightness);
 }

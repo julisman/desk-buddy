@@ -1,0 +1,204 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Desk Buddy Build Guide</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+@page { size: A4; margin: 16mm 16mm 18mm; }
+:root { --ink:#1d1f22; --muted:#5f6368; --accent:#e8193c; --line:#e3e3df; --soft:#f6f5f2; }
+* { box-sizing: border-box; }
+body { margin:0; color:var(--ink); font: 10.5pt/1.55 "IBM Plex Sans", system-ui, sans-serif; }
+h1,h2,h3 { font-family: Fraunces, Georgia, serif; line-height:1.15; margin:0; }
+h2 { font-size: 20pt; margin: 0 0 4mm; }
+h3 { font-size: 12.5pt; margin: 5mm 0 2mm; }
+p { margin: 0 0 3mm; }
+section { break-before: page; }
+.cover { height: 255mm; display:flex; flex-direction:column; justify-content:space-between; break-before:auto; }
+.cover .kicker { font-family:"IBM Plex Mono", monospace; color:var(--accent); letter-spacing:.12em; font-size:9pt; text-transform:uppercase; }
+.cover h1 { font-size: 54pt; font-weight:800; margin: 4mm 0; }
+.cover .sub { font-size: 14pt; color: var(--muted); max-width: 120mm; }
+.hero { display:block; height: 118mm; border-radius: 6mm; margin: 6mm 0 0; }
+.gallery { display:grid; grid-template-columns: 1fr 1fr; gap: 6mm 6mm; }
+.gallery figure { margin:0; break-inside: avoid; }
+.gallery img { width:100%; height: 92mm; object-fit: cover; border-radius: 4mm; display:block; }
+.gallery figcaption { font-size: 9pt; color: var(--muted); margin-top: 1.5mm; }
+.gallery figcaption b { color: var(--ink); font-family: "IBM Plex Mono", monospace; font-size: 8.5pt; letter-spacing: .06em; }
+.feat { display:grid; grid-template-columns: 1fr 1fr; gap: 3mm 8mm; }
+.feat div { border-top: 2px solid var(--ink); padding-top: 2mm; }
+.feat b { display:block; font-family: Fraunces, serif; font-size: 12pt; }
+.meta { font-family:"IBM Plex Mono", monospace; font-size: 8.5pt; color: var(--muted); }
+table { width:100%; border-collapse: collapse; margin: 2mm 0 4mm; font-size: 9.5pt; }
+th { text-align:left; font-size: 7.5pt; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); border-bottom: 1.5px solid var(--ink); padding: 1.5mm 2mm; }
+td { border-bottom: 1px solid var(--line); padding: 1.6mm 2mm; vertical-align: top; }
+tr { break-inside: avoid; }
+code, .mono { font-family: "IBM Plex Mono", monospace; font-size: 9pt; background: var(--soft); padding: 0 1.2mm; border-radius: 1mm; }
+.dot { display:inline-block; width:2.6mm; height:2.6mm; border-radius:50%; margin-right:2mm; vertical-align: 0; }
+.note { background: var(--soft); border-left: 3px solid var(--accent); padding: 3mm 4mm; margin: 3mm 0; break-inside: avoid; }
+ol { padding-left: 5mm; margin: 0 0 3mm; } li { margin-bottom: 1.6mm; }
+.diagram svg { width: 100%; height: auto; }
+.modes { display:grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+.mode { border: 1px solid var(--line); border-radius: 3mm; padding: 3mm 4mm; break-inside: avoid; }
+.mode b { font-family: Fraunces, serif; font-size: 12pt; }
+.ui { white-space: nowrap; }
+.compact td { padding: 1mm 2mm; font-size: 9pt; }
+.total td { font-weight: 600; border-bottom: 0; }
+</style></head><body>
+
+<div class="cover">
+  <div>
+    <div class="kicker">Build guide · v1.0.1</div>
+    <h1>Desk Buddy</h1>
+    <p class="sub">A small desk companion: a face that blinks and loves to be petted, a focus timer, clock &amp; weather, and a Claude Code monitor.</p>
+    <img class="hero" src="img/claude-working.jpg" alt="Desk Buddy showing Claude Code status">
+  </div>
+  <div class="feat"><div><b>Living face</b>Blinks, glances around, gets happy when you turn the knob or pet the pad.</div><div><b>Focus timer</b>25/5 minute Pomodoro; the face turns serious while you focus.</div><div><b>Clock &amp; weather</b>Synced over the internet, with weather for your location.</div><div><b>Claude Code monitor</b>Context, session &amp; weekly limits, alarm when Claude needs permission.</div></div>
+  <p class="meta">Firmware &amp; code: https://github.com/julisman/desk-buddy · Installer: https://julisman.github.io/desk-buddy/<br>License CC BY-NC 4.0: free for non-commercial use with attribution.</p>
+</div>
+
+<section>
+  <h2>Meet Desk Buddy</h2>
+  <p>A 1.69" screen with a lively robot face. Hold the knob to switch modes.</p>
+  <div class="gallery"><figure><img src="img/claude-working.jpg" alt=""><figcaption><b>CLAUDE · WORKING</b><br>Claude Code is working: context, session and weekly limits, reset times.</figcaption></figure><figure><img src="img/claude-idle.jpg" alt=""><figcaption><b>CLAUDE · IDLE</b><br>The session is waiting for the next prompt. Bar colours: green is safe, yellow is getting high, red is almost used up.</figcaption></figure><figure><img src="img/clock.jpg" alt=""><figcaption><b>CLOCK</b><br>Time, date and weather for your location.</figcaption></figure><figure><img src="img/focus.jpg" alt=""><figcaption><b>FOCUS</b><br>Pomodoro with a progress ring; the face turns serious.</figcaption></figure></div>
+</section>
+
+<section>
+  <h2>Parts list</h2>
+  <p>Approximate Shopee prices (October 2026). Search for the keywords directly on Shopee.</p>
+  <table class=""><thead><tr><th>Part</th><th>Keyword</th><th>Price</th><th>Notes</th></tr></thead><tbody><tr><td>ESP32-S3 N16R8 DevKitC (2 USB-C ports)</td><td><span class="mono">esp32 s3 n16r8</span></td><td>Rp85–110k</td><td>Must be N16R8 (16MB flash, 8MB PSRAM)</td></tr><tr><td>LCD 1.69" ST7789 240x280 SPI</td><td><span class="mono">lcd 1.69 st7789</span></td><td>Rp40–55k</td><td>One with a BLK pin</td></tr><tr><td>Rotary encoder KY-040</td><td><span class="mono">ky-040 rotary encoder</span></td><td>Rp6–10k</td><td>Turn + press knob</td></tr><tr><td>Passive buzzer KY-006</td><td><span class="mono">ky-006 buzzer pasif</span></td><td>Rp4–7k</td><td>3-pin module: S, +, −</td></tr><tr><td>Breadboard, 400 holes</td><td><span class="mono">breadboard 400</span></td><td>Rp8–12k</td><td>Or a mini breadboard</td></tr><tr><td>Female-male jumper wires (20 pcs)</td><td><span class="mono">kabel jumper female male</span></td><td>Rp8–12k</td><td>Signals to the ESP32 pins</td></tr><tr><td>Male-male jumper wires (20 pcs)</td><td><span class="mono">kabel jumper male male</span></td><td>Rp8–12k</td><td>To the breadboard power rails</td></tr><tr><td>USB-C data cable</td><td><span class="mono">kabel usb c data</span></td><td>Rp15–25k</td><td>Not a charge-only cable</td></tr><tr><td>Copper tape (optional)</td><td><span class="mono">copper tape</span></td><td>Rp10–15k</td><td>Touch pad for petting</td></tr></tbody></table>
+  <table><tbody><tr class="total"><td>Estimated total</td><td style="text-align:right">Rp185–260k</td></tr></tbody></table>
+  <h3>Tools</h3>
+  <p>A laptop/PC with Google Chrome or Microsoft Edge (to install the firmware). No soldering needed for this breadboard version. Optional: solder the LCD header so the contacts last.</p>
+  <div class="note"><b>Important:</b> the board must be an <b>ESP32-S3 N16R8</b>. Other variants (N8, N8R2, plain ESP32) have different memory and this firmware will not run on them.</div>
+</section>
+
+<section>
+  <h2>Wiring</h2>
+  <p>All signals go to the left header of the ESP32-S3. Power is shared through the breadboard rails: pin <b>3V3</b> to the <b>+</b> rail, pin <b>G</b> to the <b>−</b> rail.</p>
+  <div class="diagram"><svg viewBox="0 0 760 750" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace">
+<rect x="40" y="50" width="120" height="420" rx="10" fill="#202124"/>
+<text x="100" y="36" text-anchor="middle" font-size="13" fill="#5f6368">ESP32-S3 (left header)</text>
+<text x="56" y="80" font-size="13" fill="#fff">3V3</text>
+<text x="56" y="110" font-size="13" fill="#fff">GPIO 4</text>
+<text x="56" y="140" font-size="13" fill="#fff">GPIO 5</text>
+<text x="56" y="170" font-size="13" fill="#fff">GPIO 6</text>
+<text x="56" y="200" font-size="13" fill="#fff">GPIO 7</text>
+<text x="56" y="230" font-size="13" fill="#fff">GPIO 15</text>
+<text x="56" y="260" font-size="13" fill="#fff">GPIO 9</text>
+<text x="56" y="290" font-size="13" fill="#fff">GPIO 10</text>
+<text x="56" y="320" font-size="13" fill="#fff">GPIO 11</text>
+<text x="56" y="350" font-size="13" fill="#fff">GPIO 12</text>
+<text x="56" y="380" font-size="13" fill="#fff">GPIO 13</text>
+<text x="56" y="410" font-size="13" fill="#fff">GPIO 14</text>
+<text x="56" y="440" font-size="13" fill="#fff">G</text>
+<path d="M160 256 H200 V74 H470" fill="none" stroke="#1a73e8" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 286 H211 V104 H470" fill="none" stroke="#1a73e8" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 316 H222 V134 H470" fill="none" stroke="#1a73e8" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 346 H233 V164 H470" fill="none" stroke="#1a73e8" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 376 H244 V194 H470" fill="none" stroke="#1a73e8" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 406 H255 V224 H470" fill="none" stroke="#1a73e8" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 76 H266 V254 H470" fill="none" stroke="#d93025" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 436 H277 V284 H470" fill="none" stroke="#3c4043" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 106 H288 V364 H470" fill="none" stroke="#188038" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 136 H299 V394 H470" fill="none" stroke="#188038" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 166 H310 V424 H470" fill="none" stroke="#188038" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 76 H321 V454 H470" fill="none" stroke="#d93025" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 436 H332 V484 H470" fill="none" stroke="#3c4043" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 226 H343 V564 H470" fill="none" stroke="#b06000" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 76 H354 V594 H470" fill="none" stroke="#d93025" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 436 H365 V624 H470" fill="none" stroke="#3c4043" stroke-width="2.2" stroke-opacity=".85"/>
+<path d="M160 196 H376 V704 H470" fill="none" stroke="#a142f4" stroke-width="2.2" stroke-opacity=".85"/>
+<rect x="470" y="30" width="250" height="274" rx="10" fill="#f1f3f4" stroke="#dadce0"/>
+<text x="484" y="52" font-size="13" font-weight="600" fill="#202124">LCD 1.69&quot; ST7789</text>
+<circle cx="470" cy="74" r="5" fill="#1a73e8"/>
+<text x="484" y="78" font-size="12" fill="#202124">BLK</text>
+<circle cx="470" cy="104" r="5" fill="#1a73e8"/>
+<text x="484" y="108" font-size="12" fill="#202124">CS</text>
+<circle cx="470" cy="134" r="5" fill="#1a73e8"/>
+<text x="484" y="138" font-size="12" fill="#202124">DC</text>
+<circle cx="470" cy="164" r="5" fill="#1a73e8"/>
+<text x="484" y="168" font-size="12" fill="#202124">RES</text>
+<circle cx="470" cy="194" r="5" fill="#1a73e8"/>
+<text x="484" y="198" font-size="12" fill="#202124">SDA</text>
+<circle cx="470" cy="224" r="5" fill="#1a73e8"/>
+<text x="484" y="228" font-size="12" fill="#202124">SCL</text>
+<circle cx="470" cy="254" r="5" fill="#d93025"/>
+<text x="484" y="258" font-size="12" fill="#202124">VCC</text>
+<circle cx="470" cy="284" r="5" fill="#3c4043"/>
+<text x="484" y="288" font-size="12" fill="#202124">GND</text>
+<rect x="470" y="320" width="250" height="184" rx="10" fill="#f1f3f4" stroke="#dadce0"/>
+<text x="484" y="342" font-size="13" font-weight="600" fill="#202124">Knob KY-040</text>
+<circle cx="470" cy="364" r="5" fill="#188038"/>
+<text x="484" y="368" font-size="12" fill="#202124">CLK</text>
+<circle cx="470" cy="394" r="5" fill="#188038"/>
+<text x="484" y="398" font-size="12" fill="#202124">DT</text>
+<circle cx="470" cy="424" r="5" fill="#188038"/>
+<text x="484" y="428" font-size="12" fill="#202124">SW</text>
+<circle cx="470" cy="454" r="5" fill="#d93025"/>
+<text x="484" y="458" font-size="12" fill="#202124">+</text>
+<circle cx="470" cy="484" r="5" fill="#3c4043"/>
+<text x="484" y="488" font-size="12" fill="#202124">GND</text>
+<rect x="470" y="520" width="250" height="124" rx="10" fill="#f1f3f4" stroke="#dadce0"/>
+<text x="484" y="542" font-size="13" font-weight="600" fill="#202124">Buzzer KY-006</text>
+<circle cx="470" cy="564" r="5" fill="#b06000"/>
+<text x="484" y="568" font-size="12" fill="#202124">S</text>
+<circle cx="470" cy="594" r="5" fill="#d93025"/>
+<text x="484" y="598" font-size="12" fill="#202124">+ (middle)</text>
+<circle cx="470" cy="624" r="5" fill="#3c4043"/>
+<text x="484" y="628" font-size="12" fill="#202124">−</text>
+<rect x="470" y="660" width="250" height="64" rx="10" fill="#f1f3f4" stroke="#dadce0"/>
+<text x="484" y="682" font-size="13" font-weight="600" fill="#202124">Touch pad</text>
+<circle cx="470" cy="704" r="5" fill="#a142f4"/>
+<text x="484" y="708" font-size="12" fill="#202124">wire / copper tape</text>
+<circle cx="160" cy="76" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="106" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="136" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="166" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="196" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="226" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="256" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="286" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="316" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="346" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="376" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="406" r="5" fill="#fbbc04"/>
+<circle cx="160" cy="436" r="5" fill="#fbbc04"/>
+</svg></div>
+</section>
+
+<section>
+  <h2>Connection table</h2>
+  <table class="compact"><thead><tr><th>Module</th><th>Module pin</th><th>Connect to</th></tr></thead><tbody><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>BLK</td><td>GPIO 9</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>CS</td><td>GPIO 10</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>DC</td><td>GPIO 11</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>RES</td><td>GPIO 12</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>SDA</td><td>GPIO 13</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>SCL</td><td>GPIO 14</td></tr><tr><td><span class="dot" style="background:#d93025"></span>LCD 1.69&quot; ST7789</td><td>VCC</td><td>3V3 (breadboard + rail)</td></tr><tr><td><span class="dot" style="background:#3c4043"></span>LCD 1.69&quot; ST7789</td><td>GND</td><td>GND (breadboard − rail)</td></tr><tr><td><span class="dot" style="background:#188038"></span>Knob KY-040</td><td>CLK</td><td>GPIO 4</td></tr><tr><td><span class="dot" style="background:#188038"></span>Knob KY-040</td><td>DT</td><td>GPIO 5</td></tr><tr><td><span class="dot" style="background:#188038"></span>Knob KY-040</td><td>SW</td><td>GPIO 6</td></tr><tr><td><span class="dot" style="background:#d93025"></span>Knob KY-040</td><td>+</td><td>3V3 (breadboard + rail)</td></tr><tr><td><span class="dot" style="background:#3c4043"></span>Knob KY-040</td><td>GND</td><td>GND (breadboard − rail)</td></tr><tr><td><span class="dot" style="background:#b06000"></span>Buzzer KY-006</td><td>S</td><td>GPIO 15</td></tr><tr><td><span class="dot" style="background:#d93025"></span>Buzzer KY-006</td><td>+ (middle)</td><td>3V3 (breadboard + rail)</td></tr><tr><td><span class="dot" style="background:#3c4043"></span>Buzzer KY-006</td><td>−</td><td>GND (breadboard − rail)</td></tr><tr><td><span class="dot" style="background:#a142f4"></span>Touch pad</td><td>wire / copper tape</td><td>GPIO 7</td></tr></tbody></table>
+  <div class="note"><b>Do not use the 5V pin.</b> When plugged into the native USB port, the 5V pin has no power. All modules use 3V3.</div>
+  <h3>Assembly steps</h3>
+  <ol><li>Unplug USB. Push the LCD, knob and buzzer into the breadboard, each in its own rows.</li><li>Male-male wires: ESP32 pin <b>3V3</b> to the <b>+</b> rail, pin <b>G</b> to the <b>−</b> rail. Then each module's VCC/+ to the + rail and GND/− to the − rail.</li><li>Female-male wires: female end on the ESP32 pin, male end in the module's pin row, as in the table.</li><li>Touch pad: one wire to GPIO 7. Leave the other end free, or stick on 2x2 cm of copper tape (it works through a plastic case).</li><li>Double-check: no wire on the 5V pin, and the + and − rails are not swapped.</li></ol>
+  <div class="note">LCD without soldering: the LCD header pins often make poor contact. Insert it slightly tilted and hold it with tape so the pins press against the sides of the holes.</div>
+</section>
+
+<section>
+  <h2>Install the firmware</h2>
+  <p>No software to install. On your laptop, open (Chrome or Edge):</p>
+  <p style="font-size:14pt"><b class="mono" style="font-size:12pt">https://julisman.github.io/desk-buddy/</b></p>
+  <ol><li>Plug the ESP32-S3 into your laptop with a USB-C <b>data</b> cable, using the port labelled <b>USB</b> (not COM).</li><li>Click <b>Install Desk Buddy</b>, choose the port that appears (usually "USB JTAG/serial debug unit"), then <b>Install</b>. Wait about 1 minute.</li><li>Press the <b>RST</b> button on the board. The screen flashes red-green-blue, then the face appears.</li></ol>
+  <h3>Connect to WiFi</h3>
+  <ol><li>The bottom of the screen shows the setup banner <span class="mono ui">WiFi setup: join DeskBuddy-XXXX</span> / <span class="mono ui">then open 192.168.4.1</span>, where <span class="mono">XXXX</span> is your device's code, e.g. <span class="mono">DeskBuddy-1A2B</span>.</li><li>On your phone, open the WiFi settings and join that hotspot. The setup page opens by itself; if it doesn't, open <span class="mono">192.168.4.1</span> in the browser.</li><li>Fill in <span class="mono ui">WiFi name</span> (your home WiFi), <span class="mono ui">Password</span>, <span class="mono ui">Time zone</span> (e.g. WIB/WITA/WIT) and <span class="mono ui">Weather location</span> (your city), then tap <span class="mono ui">Save &amp; connect</span>. The page shows <span class="mono ui">Saved</span>, Desk Buddy restarts and connects.</li></ol>
+  <div class="note">Changing WiFi / moving house: hold the knob while powering on Desk Buddy until <span class="mono ui">WiFi reset</span> appears. If the saved WiFi fails to connect, the setup hotspot also opens by itself.</div>
+  <p>Want to change the code? The full source is at <span class="mono">https://github.com/julisman/desk-buddy</span> (PlatformIO).</p>
+</section>
+
+<section>
+  <h2>How to use</h2>
+  <p><b>Hold the knob</b> (about 1 second) to change mode. <b>Pet</b> the touch pad any time: the face gets happy, hearts pop out, and it "purrs".</p>
+  <div class="modes"><div class="mode"><b>FACE</b><br>Turn = petting (happy, glancing). Press = boop (surprised).</div><div class="mode"><b>FOCUS</b><br>Turn = set minutes. Press = start / pause. Focus for 25 minutes, then a 5-minute break starts automatically.</div><div class="mode"><b>CLOCK</b><br>Time, date and weather for your location. Before WiFi is set up it shows <span class="mono ui">WiFi setup (see below)</span>.</div><div class="mode"><b>CLAUDE</b><br>Claude Code status from your laptop. Turn = switch session. Press = silence the alarm.</div></div>
+  <p style="margin-top:4mm">Untouched for 5 minutes (at night, 23:00–07:00: 1 minute), Desk Buddy goes to sleep and dims the screen. Touch the knob to wake it.</p>
+
+  <h3>CLAUDE mode (for Claude Code users)</h3>
+  <p>Desk Buddy shows the model, context %, session (5-hour) and weekly limits with their reset times, and the status: <b>WORKING</b>, <b>NEEDS YOU</b> (alarm + red frame when Claude asks for permission), <b>DONE</b>. It can track up to 4 sessions at once.</p>
+  <ol><li>Laptop and Desk Buddy on the same WiFi. Requires <span class="mono">jq</span> (<span class="mono">brew install jq</span>).</li><li>Download the source code from https://github.com/julisman/desk-buddy, then run <span class="mono">tools/install-claude-hooks.sh</span>. To remove it: <span class="mono">--uninstall</span>.</li><li>Start a new Claude Code session. To try it without Claude: <span class="mono">tools/claude-desk-buddy.sh demo</span>.</li></ol>
+  <p>Only numbers and status are sent to Desk Buddy. Your prompts and Claude's replies never leave your laptop.</p>
+</section>
+
+<section>
+  <h2>Troubleshooting</h2>
+  <table class=""><thead><tr><th>Symptom</th><th>Fix</th></tr></thead><tbody><tr><td>Screen lights up but is plain grey / white</td><td>The LCD data wires (SDA, SCL, CS, DC, RES) aren't making contact. Re-seat them, tilt the LCD header slightly in the breadboard, hold it with tape, press RST. Soldering the LCD header is the permanent fix.</td></tr><tr><td>Screen completely dead</td><td>LCD VCC must go to 3V3, not 5V (the 5V pin has no power when plugged into native USB).</td></tr><tr><td>Board keeps restarting when it beeps</td><td>Check the buzzer wiring: S to GPIO 15, + to 3V3, − to GND. The firmware already uses a low volume to be safe.</td></tr><tr><td>Port doesn't appear when installing</td><td>Swap the USB-C cable (many are charge-only). Try the other USB port. Or hold BOOT, press RST, release BOOT.</td></tr><tr><td>Knob reversed / jumps by 2</td><td>Swap the CLK and DT wires. If 1 click = 2 steps, let us know (firmware setting).</td></tr><tr><td>No clock / weather</td><td>WiFi isn't connected yet (clock mode shows <span class="mono ui">WiFi setup (see below)</span>). Hold the knob while powering on to redo WiFi setup.</td></tr><tr><td>Petting isn't detected</td><td>Don't touch the pad while Desk Buddy is powering on (calibration). Use a short wire and a wider pad (2x2 cm copper tape).</td></tr></tbody></table>
+  <h3>Next</h3>
+  <p><b>Phase 2:</b> LiPo battery + Type-C charger (take it anywhere, battery icon) and voice: talk to Desk Buddy through a mic and speaker, answered by an AI running on your laptop.</p>
+  <p class="meta" style="margin-top:8mm">Desk Buddy v1.0.1 · https://github.com/julisman/desk-buddy · CC BY-NC 4.0</p>
+</section>
+</body></html>

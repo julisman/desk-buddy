@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,29 +25,31 @@
 <body>
 <main>
   <h1>Desk Buddy</h1>
-  <p class="lead">Install firmware Desk Buddy ke ESP32-S3 langsung dari browser. Tanpa install software, tanpa coding.</p>
+  <p class="lead">Install the Desk Buddy firmware on an ESP32-S3 straight from your browser. No software to install, no coding.</p>
 
   <div class="card">
     <esp-web-install-button manifest="manifest.json">
       <button slot="activate">Install Desk Buddy</button>
-      <span slot="unsupported">Browser ini belum bisa. Pakai <b>Google Chrome</b> atau <b>Microsoft Edge</b> di laptop/PC (bukan HP).</span>
-      <span slot="not-allowed">Halaman harus dibuka lewat https.</span>
+      <span slot="unsupported">This browser isn't supported. Use <b>Google Chrome</b> or <b>Microsoft Edge</b> on a laptop/PC (not a phone).</span>
+      <span slot="not-allowed">This page must be opened over https.</span>
     </esp-web-install-button>
   </div>
 
   <div class="card">
     <ol>
-      <li>Rakit dulu sesuai panduan PDF (LCD, knob, buzzer, kabel touch).</li>
-      <li>Colok ESP32-S3 ke laptop pakai kabel USB-C <b>data</b> (bukan kabel cas saja), di port <b>USB</b> (bukan COM).</li>
-      <li>Klik <b>Install Desk Buddy</b>, pilih port yang muncul (biasanya "USB JTAG/serial debug unit"), lalu <b>Install</b>. Tunggu sekitar 1 menit.</li>
-      <li>Tekan tombol <b>RST</b> di board. Layar berkedip merah-hijau-biru, lalu muncul wajah.</li>
-      <li>Di HP, sambung ke WiFi <code>DeskBuddy-XXXX</code> (namanya tampil di layar). Halaman setup terbuka sendiri; kalau tidak, buka <code>192.168.4.1</code>.</li>
-      <li>Pilih WiFi rumah, isi password dan zona waktu, lalu <b>Simpan</b>. Selesai!</li>
+      <li>First build it following the <a href="guide/Desk-Buddy-Build-Guide.pdf">PDF build guide</a> (LCD, knob, buzzer, touch wire).</li>
+      <li>Plug the ESP32-S3 into your laptop with a USB-C <b>data</b> cable (not a charge-only cable), into the <b>USB</b> port (not COM).</li>
+      <li>Click <b>Install Desk Buddy</b>, pick the port that appears (usually "USB JTAG/serial debug unit"), then <b>Install</b>. Wait about 1 minute.</li>
+      <li>Press the <b>RST</b> button on the board. The screen flashes red-green-blue, then the face appears.</li>
+      <li>On your phone, join the WiFi <code>DeskBuddy-XXXX</code> (the screen shows "WiFi setup: join DeskBuddy-XXXX, then open 192.168.4.1"). The setup page opens by itself; if not, open <code>192.168.4.1</code>.</li>
+      <li>Pick your home network under <b>WiFi name</b>, enter the <b>Password</b>, set <b>Time zone</b> and <b>Weather location</b>, then tap <b>Save &amp; connect</b>. Done!</li>
     </ol>
   </div>
 
-  <p class="warn">Port tidak muncul? Coba kabel lain (banyak kabel USB-C cuma untuk cas), atau tahan tombol <b>BOOT</b>, tekan <b>RST</b>, lepas BOOT, lalu klik Install lagi.
-  Ganti WiFi: tahan knob sambil menyalakan Desk Buddy.</p>
+  <p class="warn">Port doesn't show up? Try another cable (many USB-C cables are charge-only), or hold the <b>BOOT</b> button, press <b>RST</b>, release BOOT, then click Install again.
+  Change WiFi: hold the knob while powering on Desk Buddy until "WiFi reset" appears.</p>
+
+  <p class="warn">Guides: <a href="guide/Desk-Buddy-Build-Guide.pdf">Build guide (PDF)</a> · <a href="guide/Desk-Buddy-Panduan-Rakit.pdf" hreflang="id">Panduan rakit (Bahasa Indonesia)</a></p>
 </main>
 </body>
 </html>

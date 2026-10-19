@@ -1,12 +1,12 @@
 // Desk Buddy — main
 //
-// Mode (tahan knob untuk ganti):  FACE -> FOCUS -> CLOCK -> CLAUDE
-//   FACE  : putar = elus (senang), tekan = boop (kaget)
-//   FOCUS : putar = set menit, tekan = start/pause
-//   CLOCK : jam + cuaca, tekan = boop
-//   CLAUDE: status Claude Code dari laptop (context, limit sesi/minggu, working/butuh kamu),
-//           putar = pindah sesi (kalau > 1), tekan = diamkan alarm "butuh kamu"
-// Idle lama (lebih cepat di malam hari) -> tidur + layar redup. Sentuh knob -> bangun.
+// Modes (hold knob to switch):  FACE -> FOCUS -> CLOCK -> CLAUDE
+//   FACE  : turn = pet (happy), press = boop (surprised)
+//   FOCUS : turn = set minutes, press = start/pause
+//   CLOCK : clock + weather, press = boop
+//   CLAUDE: Claude Code status from the laptop (context, session/week limits, working/needs you),
+//           turn = switch session (if > 1), press = silence the "needs you" alarm
+// Idle for a while (sooner at night) -> sleep + dim screen. Touch the knob -> wake.
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include <esp_system.h>
@@ -33,14 +33,14 @@ static uint32_t lastInputMs = 0;
 static uint32_t lastFrameMs = 0;
 static uint32_t toastUntil = 0;
 
-// Alarm "Claude butuh kamu": jumlah bunyi yang sudah dimainkan untuk permintaan sekarang
+// "Claude needs you" alarm: number of sounds already played for the current request
 static uint8_t claudeAlertCount = 0;
 static uint32_t claudeAlertNextMs = 0;
 
 static Mood tempMood = Mood::Neutral;
 static uint32_t tempMoodUntil = 0;
 
-// Hati yang melayang saat dielus (touch pad)
+// Hearts that float up while petted (touch pad)
 struct Heart {
   int x;
   uint32_t born;
@@ -50,7 +50,7 @@ static Heart hearts[8];
 static uint32_t lastHeartMs = 0;
 static const uint32_t HEART_LIFE_MS = 1500;
 
-// Layout FOCUS/CLOCK didesain untuk tinggi 240; OY menengahkan di layar lebih tinggi (280)
+// FOCUS/CLOCK layout is designed for 240 height; OY centers it on the taller screen (280)
 static const int OY = (SCREEN_H - 240) / 2;
 
 // ---------- Helpers ----------
@@ -78,13 +78,13 @@ static void wake() {
   asleep = false;
   setTempMood(Mood::Surprised, 600);
   buzzerPlay(SND_WAKE);
-  LOG("[sleep] bangun\n");
+  LOG("[sleep] wake\n");
 }
 
 static void goToSleep() {
   asleep = true;
   mode = Mode::Face;
-  LOG("[sleep] tidur\n");
+  LOG("[sleep] sleep\n");
 }
 
 // ---------- Input per mode ----------
@@ -101,7 +101,7 @@ static void handleInput(const InputEvents &ev) {
     case Mode::Clock:
     case Mode::Claude:
       if (ev.click && mode == Mode::Claude && claudeAlertCount > 0 && claudeAlertCount < CLAUDE_ALERT_MAX) {
-        claudeAlertCount = CLAUDE_ALERT_MAX;  // diamkan alarm, status tetap tampil
+        claudeAlertCount = CLAUDE_ALERT_MAX;  // silence the alarm, status stays on screen
         buzzerPlay(SND_MODE);
         break;
       }
@@ -111,7 +111,7 @@ static void handleInput(const InputEvents &ev) {
         break;
       }
       if (ev.turns) {
-        // "Dielus": senang + lirik ke arah putaran
+        // "Petted": happy + glance in the turn direction
         setTempMood(Mood::Happy, 1500);
         faceLook(ev.turns > 0 ? 0.8f : -0.8f, -0.2f, 900);
         buzzerPlay(SND_TICK);
@@ -143,7 +143,7 @@ static void drawZzz(uint32_t now) {
   canvas.setTextDatum(MC_DATUM);
   canvas.setTextColor(COLOR_MUTED);
   for (int i = 0; i < 3; i++) {
-    // Tiap "z" melayang naik lalu muncul lagi dari bawah
+    // Each "z" floats up then reappears from the bottom
     float t = fmodf(now / 2400.0f + i / 3.0f, 1.0f);
     int x = 170 + i * 14 + (int)(sinf(t * 6.28f) * 4);
     int y = OY + 80 - (int)(t * 50);
@@ -187,7 +187,7 @@ static void drawFaceMode(uint32_t now) {
   drawHearts(now);
 }
 
-// Arc TFT_eSPI: 0 derajat = jam 6, searah jarum jam. Mulai dari jam 12 = 180.
+// TFT_eSPI arc: 0 degrees = 6 o'clock, clockwise. Starting at 12 o'clock = 180.
 static void drawRing(float fraction, uint16_t color) {
   const int cx = SCREEN_W / 2, cy = SCREEN_H / 2, r = 117, ir = 109;
   canvas.drawSmoothArc(cx, cy, r, ir, 0, 360, COLOR_TRACK, COLOR_BG, false);
@@ -224,7 +224,7 @@ static void drawFocusMode() {
   canvas.setTextColor(color);
   canvas.drawString(label, SCREEN_W / 2, OY + 180, 2);
 
-  // Satu titik per sesi fokus yang sudah selesai (maks 8 ditampilkan)
+  // One dot per completed focus session (max 8 shown)
   int n = min(focusCompleted(), 8);
   int x0 = SCREEN_W / 2 - (n - 1) * 7;
   for (int i = 0; i < n; i++) canvas.fillSmoothCircle(x0 + i * 14, OY + 204, 4, COLOR_FOCUS, COLOR_BG);
@@ -237,7 +237,7 @@ static void drawClockMode() {
   if (!netTimeValid()) {
     canvas.setTextColor(COLOR_TEXT);
     canvas.drawString("--:--", cx, OY + 95, 7);
-    const char *msg = "Setup WiFi (lihat bawah)";
+    const char *msg = "WiFi setup (see below)";
     if (!netSetupActive() && netStatus() == NetStatus::Connecting) msg = "Connecting WiFi...";
     else if (netStatus() == NetStatus::SyncingTime) msg = "Syncing time...";
     canvas.setTextColor(COLOR_MUTED);
@@ -251,7 +251,7 @@ static void drawClockMode() {
   localtime_r(&now, &t);
   char buf[24];
 
-  // Titik dua kedip tiap detik
+  // Colon blinks every second
   snprintf(buf, sizeof(buf), t.tm_sec % 2 ? "%02d:%02d" : "%02d.%02d", t.tm_hour, t.tm_min);
   canvas.setTextColor(COLOR_TEXT);
   canvas.drawString(buf, cx, OY + 78, 7);
@@ -266,7 +266,7 @@ static void drawClockMode() {
     canvas.setTextColor(COLOR_TEXT);
     canvas.setTextDatum(MR_DATUM);
     canvas.drawString(buf, cx + 2, OY + 160, 4);
-    canvas.drawCircle(cx + 7, OY + 152, 3, COLOR_TEXT);  // simbol derajat (font tidak punya)
+    canvas.drawCircle(cx + 7, OY + 152, 3, COLOR_TEXT);  // degree symbol (font doesn't have one)
     canvas.setTextDatum(ML_DATUM);
     canvas.drawString("C", cx + 12, OY + 160, 4);
     canvas.setTextDatum(MC_DATUM);
@@ -283,7 +283,7 @@ static uint16_t pctColor(float pct) {
   return pct >= 90 ? COLOR_BAD : pct >= 70 ? COLOR_WARN : COLOR_OK;
 }
 
-// "resets 08:10" (sesi) atau "resets Wed 14 Oct 15:00" (mingguan); kosong kalau jam belum sync
+// "resets 08:10" (session) or "resets Wed 14 Oct 15:00" (weekly); empty if the clock isn't synced yet
 static void formatReset(char *buf, size_t size, uint32_t epoch, bool withDate) {
   buf[0] = 0;
   if (!epoch || !netTimeValid()) return;
@@ -295,7 +295,7 @@ static void formatReset(char *buf, size_t size, uint32_t epoch, bool withDate) {
   snprintf(buf, size, "resets %s", when);
 }
 
-// Label + persen di atas, bar di tengah, keterangan kecil di bawah. Tinggi total 38 px.
+// Label + percent on top, bar in the middle, small caption below. Total height 38 px.
 static void drawUsageBar(int y, const char *label, float pct, const char *sub) {
   const int x = 20, w = SCREEN_W - 40;
   canvas.setTextDatum(TL_DATUM);
@@ -334,7 +334,7 @@ static void drawClaudeMode(uint32_t now) {
   ClaudeState cs = claudeState();
   faceDraw(canvas, cx, 52, 0.4f);
 
-  // Satu titik per sesi Claude Code, warna = status; yang tampil lebih besar + cincin
+  // One dot per Claude Code session, color = status; the shown one is bigger + ringed
   if (cs.count > 1) {
     const int gap = 18, y = 14;
     int x0 = cx - (cs.count - 1) * gap / 2;
@@ -394,23 +394,23 @@ static void drawClaudeMode(uint32_t now) {
   formatReset(sub, sizeof(sub), cs.weekResets, true);
   drawUsageBar(232, "Week", cs.weekPct, sub);
 
-  // Bingkai berkedip saat Claude menunggu izin
+  // Flashing border while Claude waits for permission
   if (cs.activity == ClaudeActivity::NeedsYou && flashOn) {
     for (int i = 0; i < 3; i++) canvas.drawRoundRect(i, i, SCREEN_W - 2 * i, SCREEN_H - 2 * i, 18, COLOR_BAD);
   }
 }
 
-// Banner bawah selama hotspot setup terbuka (semua mode)
+// Bottom banner while the setup hotspot is open (all modes)
 static void drawSetupBanner() {
   if (!netSetupActive()) return;
   canvas.fillRect(0, SCREEN_H - 58, SCREEN_W, 58, COLOR_TRACK);
   canvas.setTextDatum(MC_DATUM);
   canvas.setTextColor(COLOR_MUTED);
-  canvas.drawString("Setup WiFi: sambung HP ke", SCREEN_W / 2, SCREEN_H - 46, 2);
+  canvas.drawString("WiFi setup: join", SCREEN_W / 2, SCREEN_H - 46, 2);
   canvas.setTextColor(COLOR_TEXT);
   canvas.drawString(netSetupApName(), SCREEN_W / 2, SCREEN_H - 28, 2);
   canvas.setTextColor(COLOR_MUTED);
-  canvas.drawString("lalu buka 192.168.4.1", SCREEN_W / 2, SCREEN_H - 11, 1);
+  canvas.drawString("then open 192.168.4.1", SCREEN_W / 2, SCREEN_H - 11, 1);
 }
 
 static void drawToast(uint32_t now) {
@@ -436,16 +436,16 @@ static void render(uint32_t now) {
   displayPush();
 }
 
-// Statistik touch sejak boot (supaya hasil tes tetap kelihatan di log berikutnya)
+// Touch stats since boot (so test results stay visible in later logs)
 static uint32_t touchCount = 0, touchLongestMs = 0, touchStartMs = 0;
 
-// Log status berkala: bukti board hidup + fps render aktual
+// Periodic status log: proof the board is alive + actual render fps
 static void logStatus(uint32_t now) {
   static uint32_t frames = 0, windowStart = 0;
   frames++;
   if (now - windowStart < 5000) return;
-  LOG("[status] mode=%s%s fps=%.1f heap=%uKB psram=%uKB touch=%u/%u sentuhan=%u terlama=%ums\n",
-      MODE_NAMES[(int)mode], asleep ? " (tidur)" : "", frames * 1000.0f / (now - windowStart),
+  LOG("[status] mode=%s%s fps=%.1f heap=%uKB psram=%uKB touch=%u/%u touches=%u longest=%ums\n",
+      MODE_NAMES[(int)mode], asleep ? " (asleep)" : "", frames * 1000.0f / (now - windowStart),
       ESP.getFreeHeap() / 1024, ESP.getFreePsram() / 1024, touchRaw(), touchBaseline(),
       touchCount, touchLongestMs);
   frames = 0;
@@ -456,7 +456,7 @@ static void logStatus(uint32_t now) {
 
 void setup() {
   Serial.begin(115200);
-  delay(1500);  // USB native re-enumerate setelah reset; kasih waktu monitor connect
+  delay(1500);  // native USB re-enumerates after reset; give the monitor time to connect
   LOG("\n=== Desk Buddy v%s ===\n", APP_VERSION);
   LOG("[boot] PSRAM %u KB, flash %u MB\n", ESP.getPsramSize() / 1024, ESP.getFlashChipSize() >> 20);
 
@@ -465,7 +465,7 @@ void setup() {
   inputInit();
   buzzerInit();
 
-  // Tahan knob saat dinyalakan = lupakan WiFi -> hotspot setup terbuka lagi
+  // Hold knob at power-on = forget WiFi -> setup hotspot opens again
   if (digitalRead(PIN_ENC_SW) == LOW) {
     delay(1500);
     if (digitalRead(PIN_ENC_SW) == LOW) {
@@ -474,10 +474,10 @@ void setup() {
       c.fillSprite(COLOR_BG);
       c.setTextDatum(MC_DATUM);
       c.setTextColor(COLOR_TEXT);
-      c.drawString("WiFi direset", SCREEN_W / 2, SCREEN_H / 2, 4);
+      c.drawString("WiFi reset", SCREEN_W / 2, SCREEN_H / 2, 4);
       displayPush();
       buzzerPlay(SND_MODE);
-      while (digitalRead(PIN_ENC_SW) == LOW) buzzerUpdate();  // tunggu knob dilepas
+      while (digitalRead(PIN_ENC_SW) == LOW) buzzerUpdate();  // wait for knob release
     }
   }
   faceInit();
@@ -487,7 +487,7 @@ void setup() {
   buzzerPlay(SND_BOOT);
   setTempMood(Mood::Happy, 1500);
   lastInputMs = millis();
-  // Alasan reset terakhir: 1=power-on 3=software 4=panic 5..7=watchdog 9=brownout
+  // Last reset reason: 1=power-on 3=software 4=panic 5..7=watchdog 9=brownout
   LOG("[boot] ready (reset reason %d)\n", (int)esp_reset_reason());
 }
 
@@ -505,11 +505,11 @@ void loop() {
     LOG("[input] turns=%d%s%s%s\n", ev.turns, ev.click ? " click" : "", ev.longPress ? " long" : "",
         ev.touchStart ? " touch" : "");
     lastInputMs = now;
-    if (asleep) wake();  // sentuhan pertama cuma membangunkan
+    if (asleep) wake();  // first touch only wakes it up
     else handleInput(ev);
   }
 
-  // Dielus: selama touch pad disentuh, Desk Buddy senang, melihat ke atas, keluar hati
+  // Petted: while the touch pad is touched, Desk Buddy is happy, looks up, hearts pop out
   static bool wasTouching = false;
   if (ev.touching && !asleep) {
     lastInputMs = now;
@@ -528,7 +528,7 @@ void loop() {
   if (wasTouching && !ev.touching) {
     uint32_t held = now - touchStartMs;
     if (held > touchLongestMs) touchLongestMs = held;
-    LOG("[touch] lepas setelah %ums\n", held);
+    LOG("[touch] released after %ums\n", held);
   }
   wasTouching = ev.touching;
 
@@ -541,14 +541,14 @@ void loop() {
     buzzerPlay(fe == FocusEvent::WorkDone ? SND_FOCUS_DONE : SND_BREAK_DONE);
   }
 
-  // Claude Code: server nyala begitu WiFi connect, lalu reaksi ke event dari laptop
+  // Claude Code: server starts as soon as WiFi connects, then reacts to events from the laptop
   if (!claudeLinkStarted() && netConnected()) claudeLinkStart();
   uint8_t claudeEvents = claudeTakeEvents();
   ClaudeState cs = claudeState();
   bool needsYou = cs.activity == ClaudeActivity::NeedsYou;
   bool claudeBusy = cs.activity == ClaudeActivity::Working && now - cs.updatedMs < CLAUDE_STALE_MS;
   if (claudeEvents & CLAUDE_EV_NEEDS_YOU) {
-    asleep = false;  // bangun tanpa bunyi "wake", langsung alarm
+    asleep = false;  // wake without the "wake" sound, straight to the alarm
     if (mode != Mode::Claude) setMode(Mode::Claude);
     lastInputMs = now;
     buzzerPlay(SND_ALERT);
@@ -561,8 +561,8 @@ void loop() {
     claudeAlertNextMs = now + CLAUDE_ALERT_REPEAT_MS;
   }
   if (!needsYou) claudeAlertCount = 0;
-  // Di mode CLAUDE, kabar dari Claude = aktivitas: bangun pelan (tanpa bunyi) + reset timer tidur,
-  // supaya status DONE tetap kelihatan
+  // In CLAUDE mode, updates from Claude = activity: wake quietly (no sound) + reset the sleep timer,
+  // so the DONE status stays visible
   if ((claudeEvents & CLAUDE_EV_ACTIVITY) && mode == Mode::Claude) {
     asleep = false;
     lastInputMs = now;

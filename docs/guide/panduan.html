@@ -20,8 +20,6 @@ section { break-before: page; }
 .gallery img { width:100%; height: 92mm; object-fit: cover; border-radius: 4mm; display:block; }
 .gallery figcaption { font-size: 9pt; color: var(--muted); margin-top: 1.5mm; }
 .gallery figcaption b { color: var(--ink); font-family: "IBM Plex Mono", monospace; font-size: 8.5pt; letter-spacing: .06em; }
-.face { width: 120mm; height: 70mm; background:#0b0b0c; border-radius: 12mm; display:flex; align-items:center; justify-content:center; gap: 14mm; margin: 10mm 0; }
-.eye { width: 22mm; height: 30mm; background: var(--accent); border-radius: 7mm; }
 .feat { display:grid; grid-template-columns: 1fr 1fr; gap: 3mm 8mm; }
 .feat div { border-top: 2px solid var(--ink); padding-top: 2mm; }
 .feat b { display:block; font-family: Fraunces, serif; font-size: 12pt; }
@@ -38,40 +36,32 @@ ol { padding-left: 5mm; margin: 0 0 3mm; } li { margin-bottom: 1.6mm; }
 .modes { display:grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
 .mode { border: 1px solid var(--line); border-radius: 3mm; padding: 3mm 4mm; break-inside: avoid; }
 .mode b { font-family: Fraunces, serif; font-size: 12pt; }
+.ui { white-space: nowrap; }
+.compact td { padding: 1mm 2mm; font-size: 9pt; }
 .total td { font-weight: 600; border-bottom: 0; }
 </style></head><body>
 
 <div class="cover">
   <div>
-    <div class="kicker">Panduan rakit · v1.0.0</div>
+    <div class="kicker">Panduan rakit · v1.0.1</div>
     <h1>Desk Buddy</h1>
     <p class="sub">Teman kecil di meja: wajah yang berkedip dan senang dielus, focus timer, jam &amp; cuaca, dan monitor Claude Code.</p>
     <img class="hero" src="img/claude-working.jpg" alt="Desk Buddy menampilkan status Claude Code">
   </div>
-  <div class="feat">
-    <div><b>Wajah hidup</b>Berkedip, melirik, senang saat knob diputar atau pad dielus.</div>
-    <div><b>Focus timer</b>Pomodoro 25/5 menit, wajah ikut serius saat fokus.</div>
-    <div><b>Jam &amp; cuaca</b>Sinkron lewat internet, cuaca lokasi kamu.</div>
-    <div><b>Monitor Claude Code</b>Context, limit sesi &amp; mingguan, alarm saat Claude butuh izin.</div>
-  </div>
+  <div class="feat"><div><b>Wajah hidup</b>Berkedip, melirik, senang saat knob diputar atau pad dielus.</div><div><b>Focus timer</b>Pomodoro 25/5 menit, wajah ikut serius saat fokus.</div><div><b>Jam &amp; cuaca</b>Sinkron lewat internet, cuaca lokasi kamu.</div><div><b>Monitor Claude Code</b>Context, limit sesi &amp; mingguan, alarm saat Claude butuh izin.</div></div>
   <p class="meta">Firmware &amp; kode: https://github.com/julisman/desk-buddy · Installer: https://julisman.github.io/desk-buddy/<br>Lisensi CC BY-NC 4.0: bebas untuk non-komersial dengan menyebut sumber.</p>
 </div>
 
 <section>
   <h2>Kenalan dengan Desk Buddy</h2>
   <p>Layar 1.69" dengan wajah robot yang hidup. Tahan knob untuk pindah mode.</p>
-  <div class="gallery">
-    <figure><img src="img/claude-working.jpg" alt=""><figcaption><b>CLAUDE · WORKING</b><br>Claude Code sedang bekerja: context, limit sesi dan mingguan, jam reset.</figcaption></figure>
-    <figure><img src="img/claude-idle.jpg" alt=""><figcaption><b>CLAUDE · IDLE</b><br>Sesi menunggu prompt berikutnya. Warna bar: hijau aman, kuning mulai tinggi, merah hampir habis.</figcaption></figure>
-    <figure><img src="img/clock.jpg" alt=""><figcaption><b>CLOCK</b><br>Jam, tanggal, dan cuaca lokasi kamu.</figcaption></figure>
-    <figure><img src="img/focus.jpg" alt=""><figcaption><b>FOCUS</b><br>Pomodoro dengan cincin progres; wajah ikut serius.</figcaption></figure>
-  </div>
+  <div class="gallery"><figure><img src="img/claude-working.jpg" alt=""><figcaption><b>CLAUDE · WORKING</b><br>Claude Code sedang bekerja: context, limit sesi dan mingguan, jam reset.</figcaption></figure><figure><img src="img/claude-idle.jpg" alt=""><figcaption><b>CLAUDE · IDLE</b><br>Sesi menunggu prompt berikutnya. Warna bar: hijau aman, kuning mulai tinggi, merah hampir habis.</figcaption></figure><figure><img src="img/clock.jpg" alt=""><figcaption><b>CLOCK</b><br>Jam, tanggal, dan cuaca lokasi kamu.</figcaption></figure><figure><img src="img/focus.jpg" alt=""><figcaption><b>FOCUS</b><br>Pomodoro dengan cincin progres; wajah ikut serius.</figcaption></figure></div>
 </section>
 
 <section>
   <h2>Daftar komponen</h2>
   <p>Harga perkiraan Shopee (Oktober 2026). Kata kunci bisa langsung dicari di Shopee.</p>
-  <table><thead><tr><th>Komponen</th><th>Kata kunci</th><th>Harga</th><th>Catatan</th></tr></thead><tbody><tr><td>ESP32-S3 N16R8 DevKitC (2 port USB-C)</td><td><span class="mono">esp32 s3 n16r8</span></td><td>Rp85–110rb</td><td>Harus N16R8 (flash 16MB, PSRAM 8MB)</td></tr><tr><td>LCD 1.69" ST7789 240x280 SPI</td><td><span class="mono">lcd 1.69 st7789</span></td><td>Rp40–55rb</td><td>Yang ada pin BLK</td></tr><tr><td>Rotary encoder KY-040</td><td><span class="mono">ky-040 rotary encoder</span></td><td>Rp6–10rb</td><td>Knob putar + tekan</td></tr><tr><td>Buzzer pasif KY-006</td><td><span class="mono">ky-006 buzzer pasif</span></td><td>Rp4–7rb</td><td>Modul 3 pin: S, +, −</td></tr><tr><td>Breadboard 400 lubang</td><td><span class="mono">breadboard 400</span></td><td>Rp8–12rb</td><td>Atau mini breadboard</td></tr><tr><td>Kabel jumper female-male (20 pcs)</td><td><span class="mono">kabel jumper female male</span></td><td>Rp8–12rb</td><td>Sinyal ke pin ESP32</td></tr><tr><td>Kabel jumper male-male (20 pcs)</td><td><span class="mono">kabel jumper male male</span></td><td>Rp8–12rb</td><td>Ke jalur power breadboard</td></tr><tr><td>Kabel USB-C data</td><td><span class="mono">kabel usb c data</span></td><td>Rp15–25rb</td><td>Bukan kabel cas saja</td></tr><tr><td>Copper tape (opsional)</td><td><span class="mono">copper tape</span></td><td>Rp10–15rb</td><td>Pad sentuh untuk dielus</td></tr></tbody></table>
+  <table class=""><thead><tr><th>Komponen</th><th>Kata kunci</th><th>Harga</th><th>Catatan</th></tr></thead><tbody><tr><td>ESP32-S3 N16R8 DevKitC (2 port USB-C)</td><td><span class="mono">esp32 s3 n16r8</span></td><td>Rp85–110rb</td><td>Harus N16R8 (flash 16MB, PSRAM 8MB)</td></tr><tr><td>LCD 1.69" ST7789 240x280 SPI</td><td><span class="mono">lcd 1.69 st7789</span></td><td>Rp40–55rb</td><td>Yang ada pin BLK</td></tr><tr><td>Rotary encoder KY-040</td><td><span class="mono">ky-040 rotary encoder</span></td><td>Rp6–10rb</td><td>Knob putar + tekan</td></tr><tr><td>Buzzer pasif KY-006</td><td><span class="mono">ky-006 buzzer pasif</span></td><td>Rp4–7rb</td><td>Modul 3 pin: S, +, −</td></tr><tr><td>Breadboard 400 lubang</td><td><span class="mono">breadboard 400</span></td><td>Rp8–12rb</td><td>Atau mini breadboard</td></tr><tr><td>Kabel jumper female-male (20 pcs)</td><td><span class="mono">kabel jumper female male</span></td><td>Rp8–12rb</td><td>Sinyal ke pin ESP32</td></tr><tr><td>Kabel jumper male-male (20 pcs)</td><td><span class="mono">kabel jumper male male</span></td><td>Rp8–12rb</td><td>Ke jalur power breadboard</td></tr><tr><td>Kabel USB-C data</td><td><span class="mono">kabel usb c data</span></td><td>Rp15–25rb</td><td>Bukan kabel cas saja</td></tr><tr><td>Copper tape (opsional)</td><td><span class="mono">copper tape</span></td><td>Rp10–15rb</td><td>Pad sentuh untuk dielus</td></tr></tbody></table>
   <table><tbody><tr class="total"><td>Total perkiraan</td><td style="text-align:right">Rp185–260rb</td></tr></tbody></table>
   <h3>Alat</h3>
   <p>Laptop/PC dengan Google Chrome atau Microsoft Edge (untuk install firmware). Tidak perlu solder untuk versi breadboard ini. Opsional: solder untuk header LCD supaya kontaknya awet.</p>
@@ -174,16 +164,10 @@ ol { padding-left: 5mm; margin: 0 0 3mm; } li { margin-bottom: 1.6mm; }
 
 <section>
   <h2>Tabel sambungan</h2>
-  <table><thead><tr><th>Modul</th><th>Pin modul</th><th>Sambung ke</th></tr></thead><tbody><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>BLK</td><td>GPIO 9</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>CS</td><td>GPIO 10</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>DC</td><td>GPIO 11</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>RES</td><td>GPIO 12</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>SDA</td><td>GPIO 13</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>SCL</td><td>GPIO 14</td></tr><tr><td><span class="dot" style="background:#d93025"></span>LCD 1.69&quot; ST7789</td><td>VCC</td><td>3V3 (jalur + breadboard)</td></tr><tr><td><span class="dot" style="background:#3c4043"></span>LCD 1.69&quot; ST7789</td><td>GND</td><td>GND (jalur − breadboard)</td></tr><tr><td><span class="dot" style="background:#188038"></span>Knob KY-040</td><td>CLK</td><td>GPIO 4</td></tr><tr><td><span class="dot" style="background:#188038"></span>Knob KY-040</td><td>DT</td><td>GPIO 5</td></tr><tr><td><span class="dot" style="background:#188038"></span>Knob KY-040</td><td>SW</td><td>GPIO 6</td></tr><tr><td><span class="dot" style="background:#d93025"></span>Knob KY-040</td><td>+</td><td>3V3 (jalur + breadboard)</td></tr><tr><td><span class="dot" style="background:#3c4043"></span>Knob KY-040</td><td>GND</td><td>GND (jalur − breadboard)</td></tr><tr><td><span class="dot" style="background:#b06000"></span>Buzzer KY-006</td><td>S</td><td>GPIO 15</td></tr><tr><td><span class="dot" style="background:#d93025"></span>Buzzer KY-006</td><td>+ (tengah)</td><td>3V3 (jalur + breadboard)</td></tr><tr><td><span class="dot" style="background:#3c4043"></span>Buzzer KY-006</td><td>−</td><td>GND (jalur − breadboard)</td></tr><tr><td><span class="dot" style="background:#a142f4"></span>Touch pad</td><td>kabel / copper tape</td><td>GPIO 7</td></tr></tbody></table>
+  <table class="compact"><thead><tr><th>Modul</th><th>Pin modul</th><th>Sambung ke</th></tr></thead><tbody><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>BLK</td><td>GPIO 9</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>CS</td><td>GPIO 10</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>DC</td><td>GPIO 11</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>RES</td><td>GPIO 12</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>SDA</td><td>GPIO 13</td></tr><tr><td><span class="dot" style="background:#1a73e8"></span>LCD 1.69&quot; ST7789</td><td>SCL</td><td>GPIO 14</td></tr><tr><td><span class="dot" style="background:#d93025"></span>LCD 1.69&quot; ST7789</td><td>VCC</td><td>3V3 (jalur + breadboard)</td></tr><tr><td><span class="dot" style="background:#3c4043"></span>LCD 1.69&quot; ST7789</td><td>GND</td><td>GND (jalur − breadboard)</td></tr><tr><td><span class="dot" style="background:#188038"></span>Knob KY-040</td><td>CLK</td><td>GPIO 4</td></tr><tr><td><span class="dot" style="background:#188038"></span>Knob KY-040</td><td>DT</td><td>GPIO 5</td></tr><tr><td><span class="dot" style="background:#188038"></span>Knob KY-040</td><td>SW</td><td>GPIO 6</td></tr><tr><td><span class="dot" style="background:#d93025"></span>Knob KY-040</td><td>+</td><td>3V3 (jalur + breadboard)</td></tr><tr><td><span class="dot" style="background:#3c4043"></span>Knob KY-040</td><td>GND</td><td>GND (jalur − breadboard)</td></tr><tr><td><span class="dot" style="background:#b06000"></span>Buzzer KY-006</td><td>S</td><td>GPIO 15</td></tr><tr><td><span class="dot" style="background:#d93025"></span>Buzzer KY-006</td><td>+ (tengah)</td><td>3V3 (jalur + breadboard)</td></tr><tr><td><span class="dot" style="background:#3c4043"></span>Buzzer KY-006</td><td>−</td><td>GND (jalur − breadboard)</td></tr><tr><td><span class="dot" style="background:#a142f4"></span>Touch pad</td><td>kabel / copper tape</td><td>GPIO 7</td></tr></tbody></table>
   <div class="note"><b>Jangan pakai pin 5V.</b> Saat dicolok ke port USB native, pin 5V tidak ada listriknya. Semua modul pakai 3V3.</div>
   <h3>Langkah rakit</h3>
-  <ol>
-    <li>Cabut USB. Tancap LCD, knob, dan buzzer di breadboard, masing-masing di baris sendiri.</li>
-    <li>Kabel male-male: pin <b>3V3</b> ESP32 ke jalur <b>+</b>, pin <b>G</b> ke jalur <b>−</b>. Lalu VCC/+ tiap modul ke jalur +, GND/− ke jalur −.</li>
-    <li>Kabel female-male: ujung female ke pin ESP32, ujung male ke baris pin modul, sesuai tabel.</li>
-    <li>Touch pad: satu kabel ke GPIO 7. Ujung satunya dibiarkan bebas, atau tempel copper tape 2x2 cm (bisa dari balik casing plastik).</li>
-    <li>Cek sekali lagi: tidak ada kabel ke pin 5V, jalur + dan − tidak tertukar.</li>
-  </ol>
+  <ol><li>Cabut USB. Tancap LCD, knob, dan buzzer di breadboard, masing-masing di baris sendiri.</li><li>Kabel male-male: pin <b>3V3</b> ESP32 ke jalur <b>+</b>, pin <b>G</b> ke jalur <b>−</b>. Lalu VCC/+ tiap modul ke jalur +, GND/− ke jalur −.</li><li>Kabel female-male: ujung female ke pin ESP32, ujung male ke baris pin modul, sesuai tabel.</li><li>Touch pad: satu kabel ke GPIO 7. Ujung satunya dibiarkan bebas, atau tempel copper tape 2x2 cm (bisa dari balik casing plastik).</li><li>Cek sekali lagi: tidak ada kabel ke pin 5V, jalur + dan − tidak tertukar.</li></ol>
   <div class="note">LCD tanpa solder: pin header LCD sering kurang nempel. Tancap sedikit miring dan tahan pakai selotip supaya pin menekan dinding lubang.</div>
 </section>
 
@@ -191,47 +175,30 @@ ol { padding-left: 5mm; margin: 0 0 3mm; } li { margin-bottom: 1.6mm; }
   <h2>Install firmware</h2>
   <p>Tanpa install software. Buka di laptop (Chrome atau Edge):</p>
   <p style="font-size:14pt"><b class="mono" style="font-size:12pt">https://julisman.github.io/desk-buddy/</b></p>
-  <ol>
-    <li>Colok ESP32-S3 ke laptop pakai kabel USB-C <b>data</b>, di port <b>USB</b> (bukan COM).</li>
-    <li>Klik <b>Install Desk Buddy</b>, pilih port yang muncul (biasanya "USB JTAG/serial debug unit"), lalu <b>Install</b>. Tunggu sekitar 1 menit.</li>
-    <li>Tekan tombol <b>RST</b> di board. Layar berkedip merah-hijau-biru lalu muncul wajah.</li>
-  </ol>
+  <ol><li>Colok ESP32-S3 ke laptop pakai kabel USB-C <b>data</b>, di port <b>USB</b> (bukan COM).</li><li>Klik <b>Install Desk Buddy</b>, pilih port yang muncul (biasanya "USB JTAG/serial debug unit"), lalu <b>Install</b>. Tunggu sekitar 1 menit.</li><li>Tekan tombol <b>RST</b> di board. Layar berkedip merah-hijau-biru lalu muncul wajah.</li></ol>
   <h3>Sambungkan ke WiFi</h3>
-  <ol>
-    <li>Di bawah layar muncul nama hotspot, misalnya <span class="mono">DeskBuddy-1A2B</span>.</li>
-    <li>Di HP, buka pengaturan WiFi dan sambung ke hotspot itu. Halaman setup terbuka sendiri; kalau tidak, buka <span class="mono">192.168.4.1</span>.</li>
-    <li>Pilih WiFi rumah, isi password, pilih zona waktu (WIB/WITA/WIT), lalu <b>Simpan</b>. Desk Buddy restart dan tersambung.</li>
-  </ol>
-  <div class="note">Ganti WiFi / pindah rumah: tahan knob sambil menyalakan Desk Buddy sampai muncul "WiFi direset". Kalau WiFi tersimpan gagal tersambung, hotspot setup juga terbuka sendiri.</div>
+  <ol><li>Di bawah layar muncul banner setup <span class="mono ui">WiFi setup: join DeskBuddy-XXXX</span> / <span class="mono ui">then open 192.168.4.1</span>. <span class="mono">XXXX</span> adalah kode perangkat kamu, misalnya <span class="mono">DeskBuddy-1A2B</span>.</li><li>Di HP, buka pengaturan WiFi dan sambung ke hotspot itu. Halaman setup terbuka sendiri; kalau tidak, buka <span class="mono">192.168.4.1</span> di browser.</li><li>Isi <span class="mono ui">WiFi name</span> (nama WiFi rumah), <span class="mono ui">Password</span>, <span class="mono ui">Time zone</span> (zona waktu, misalnya WIB/WITA/WIT) dan <span class="mono ui">Weather location</span> (kota kamu, untuk cuaca), lalu tekan <span class="mono ui">Save &amp; connect</span>. Halaman menampilkan <span class="mono ui">Saved</span> (tersimpan), Desk Buddy restart dan tersambung.</li></ol>
+  <div class="note">Ganti WiFi / pindah rumah: tahan knob sambil menyalakan Desk Buddy sampai muncul <span class="mono ui">WiFi reset</span>. Kalau WiFi tersimpan gagal tersambung, hotspot setup juga terbuka sendiri.</div>
   <p>Mau ubah kode? Source code lengkap ada di <span class="mono">https://github.com/julisman/desk-buddy</span> (PlatformIO).</p>
 </section>
 
 <section>
   <h2>Cara pakai</h2>
   <p><b>Tahan knob</b> (± 1 detik) untuk ganti mode. <b>Elus</b> pad sentuh kapan saja: wajah senang, keluar hati, bunyi "purr".</p>
-  <div class="modes">
-    <div class="mode"><b>FACE</b><br>Putar = dielus (senang, melirik). Tekan = boop (kaget).</div>
-    <div class="mode"><b>FOCUS</b><br>Putar = atur menit. Tekan = mulai / jeda. Fokus 25 menit lalu istirahat 5 menit otomatis.</div>
-    <div class="mode"><b>CLOCK</b><br>Jam, tanggal, dan cuaca lokasi kamu.</div>
-    <div class="mode"><b>CLAUDE</b><br>Status Claude Code dari laptop. Putar = pindah sesi. Tekan = diamkan alarm.</div>
-  </div>
+  <div class="modes"><div class="mode"><b>FACE</b><br>Putar = dielus (senang, melirik). Tekan = boop (kaget).</div><div class="mode"><b>FOCUS</b><br>Putar = atur menit. Tekan = mulai / jeda. Fokus 25 menit lalu istirahat 5 menit otomatis.</div><div class="mode"><b>CLOCK</b><br>Jam, tanggal, dan cuaca lokasi kamu. Sebelum WiFi di-setup, muncul <span class="mono ui">WiFi setup (see below)</span>.</div><div class="mode"><b>CLAUDE</b><br>Status Claude Code dari laptop. Putar = pindah sesi. Tekan = diamkan alarm.</div></div>
   <p style="margin-top:4mm">Tidak disentuh 5 menit (malam 23:00–07:00: 1 menit): Desk Buddy tidur dan layar redup. Sentuh knob untuk membangunkan.</p>
 
   <h3>Mode CLAUDE (untuk pengguna Claude Code)</h3>
   <p>Desk Buddy menampilkan model, context %, limit sesi (5 jam) dan mingguan beserta jam reset, dan status: <b>WORKING</b>, <b>NEEDS YOU</b> (alarm + bingkai merah saat Claude minta izin), <b>DONE</b>. Bisa memantau sampai 4 sesi sekaligus.</p>
-  <ol>
-    <li>Laptop dan Desk Buddy di WiFi yang sama. Butuh <span class="mono">jq</span> (<span class="mono">brew install jq</span>).</li>
-    <li>Download source code dari https://github.com/julisman/desk-buddy, lalu jalankan <span class="mono">tools/install-claude-hooks.sh</span>. Lepas lagi: <span class="mono">--uninstall</span>.</li>
-    <li>Buka sesi Claude Code baru. Coba tanpa Claude: <span class="mono">tools/claude-desk-buddy.sh demo</span>.</li>
-  </ol>
+  <ol><li>Laptop dan Desk Buddy di WiFi yang sama. Butuh <span class="mono">jq</span> (<span class="mono">brew install jq</span>).</li><li>Download source code dari https://github.com/julisman/desk-buddy, lalu jalankan <span class="mono">tools/install-claude-hooks.sh</span>. Lepas lagi: <span class="mono">--uninstall</span>.</li><li>Buka sesi Claude Code baru. Coba tanpa Claude: <span class="mono">tools/claude-desk-buddy.sh demo</span>.</li></ol>
   <p>Yang dikirim ke Desk Buddy cuma angka dan status. Prompt dan balasan Claude tidak pernah keluar dari laptop.</p>
 </section>
 
 <section>
   <h2>Kalau ada masalah</h2>
-  <table><thead><tr><th>Gejala</th><th>Solusi</th></tr></thead><tbody><tr><td>Layar menyala tapi abu-abu / putih polos</td><td>Kabel data LCD (SDA, SCL, CS, DC, RES) tidak nempel. Tancap ulang, miringkan sedikit header LCD di breadboard, tahan pakai selotip, tekan RST. Solder header LCD = solusi permanen.</td></tr><tr><td>Layar mati total</td><td>VCC LCD harus ke 3V3, bukan 5V (pin 5V tidak ada listrik saat colok USB native).</td></tr><tr><td>Board restart terus saat bunyi</td><td>Cek kabel buzzer: S ke GPIO 15, + ke 3V3, − ke GND. Firmware sudah memakai volume kecil supaya aman.</td></tr><tr><td>Port tidak muncul saat install</td><td>Ganti kabel USB-C (banyak yang cuma untuk cas). Coba port USB yang satunya. Atau tahan BOOT, tekan RST, lepas BOOT.</td></tr><tr><td>Knob kebalik / loncat 2</td><td>Tukar kabel CLK dan DT. Kalau 1 klik = 2 langkah, beri tahu kami (setting firmware).</td></tr><tr><td>Jam / cuaca tidak muncul</td><td>WiFi belum tersambung. Tahan knob sambil menyalakan untuk setup ulang WiFi.</td></tr><tr><td>Elus tidak terasa</td><td>Jangan sentuh pad saat Desk Buddy menyala (kalibrasi). Pakai kabel pendek dan pad lebih lebar (copper tape 2x2 cm).</td></tr></tbody></table>
+  <table class=""><thead><tr><th>Gejala</th><th>Solusi</th></tr></thead><tbody><tr><td>Layar menyala tapi abu-abu / putih polos</td><td>Kabel data LCD (SDA, SCL, CS, DC, RES) tidak nempel. Tancap ulang, miringkan sedikit header LCD di breadboard, tahan pakai selotip, tekan RST. Solder header LCD = solusi permanen.</td></tr><tr><td>Layar mati total</td><td>VCC LCD harus ke 3V3, bukan 5V (pin 5V tidak ada listrik saat colok USB native).</td></tr><tr><td>Board restart terus saat bunyi</td><td>Cek kabel buzzer: S ke GPIO 15, + ke 3V3, − ke GND. Firmware sudah memakai volume kecil supaya aman.</td></tr><tr><td>Port tidak muncul saat install</td><td>Ganti kabel USB-C (banyak yang cuma untuk cas). Coba port USB yang satunya. Atau tahan BOOT, tekan RST, lepas BOOT.</td></tr><tr><td>Knob kebalik / loncat 2</td><td>Tukar kabel CLK dan DT. Kalau 1 klik = 2 langkah, beri tahu kami (setting firmware).</td></tr><tr><td>Jam / cuaca tidak muncul</td><td>WiFi belum tersambung (mode jam menampilkan <span class="mono ui">WiFi setup (see below)</span>). Tahan knob sambil menyalakan untuk setup ulang WiFi.</td></tr><tr><td>Elus tidak terasa</td><td>Jangan sentuh pad saat Desk Buddy menyala (kalibrasi). Pakai kabel pendek dan pad lebih lebar (copper tape 2x2 cm).</td></tr></tbody></table>
   <h3>Berikutnya</h3>
   <p><b>Phase 2:</b> baterai LiPo + charger Type-C (bisa dibawa ke mana-mana, ikon baterai) dan suara: ngobrol dengan Desk Buddy lewat mic dan speaker, dijawab AI dari laptop kamu.</p>
-  <p class="meta" style="margin-top:8mm">Desk Buddy v1.0.0 · https://github.com/julisman/desk-buddy · CC BY-NC 4.0</p>
+  <p class="meta" style="margin-top:8mm">Desk Buddy v1.0.1 · https://github.com/julisman/desk-buddy · CC BY-NC 4.0</p>
 </section>
 </body></html>

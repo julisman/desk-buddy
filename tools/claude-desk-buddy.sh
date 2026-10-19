@@ -1,19 +1,19 @@
 #!/bin/bash
-# Kirim status Claude Code ke Desk Buddy (mode CLAUDE).
+# Send Claude Code status to Desk Buddy (CLAUDE mode).
 #
-# Yang dikirim cuma angka & status (model, context %, limit sesi/minggu, nama folder,
-# jenis event). Prompt, balasan Claude, isi tool, dan path lengkap TIDAK dikirim.
+# Only numbers & status are sent (model, context %, session/weekly limits, folder name,
+# event type). Prompts, Claude's replies, tool contents and full paths are NOT sent.
 #
 #   status line : echo "$input" | claude-desk-buddy.sh status
-#   hook        : claude-desk-buddy.sh hook          (JSON hook dari stdin)
-#   tes         : claude-desk-buddy.sh demo          (data palsu, lihat layar)
+#   hook        : claude-desk-buddy.sh hook          (hook JSON on stdin)
+#   test        : claude-desk-buddy.sh demo          (fake data, watch the screen)
 #
-# Alamat bisa diganti: DESK_BUDDY_URL=http://192.168.1.50/claude
+# Address can be overridden: DESK_BUDDY_URL=http://192.168.1.50/claude
 URL="${DESK_BUDDY_URL:-http://deskbuddy.local/claude}"
 
 send() {
-  # Background + timeout pendek: Claude Code tidak pernah menunggu Desk Buddy.
-  # -4: tanpa ini macOS coba IPv6 dulu untuk .local dan nunggu ~5 detik.
+  # Background + short timeout: Claude Code never waits for Desk Buddy.
+  # -4: without it macOS tries IPv6 first for .local and waits ~5 seconds.
   curl -4 -s -m 2 -H 'Content-Type: application/json' --data "$1" "$URL" >/dev/null 2>&1 &
 }
 

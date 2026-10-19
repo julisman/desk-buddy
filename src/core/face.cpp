@@ -1,9 +1,9 @@
-// face.cpp — semua ekspresi dibuat dari satu bentuk mata (rounded rect) lalu
-// "dipotong" dengan warna background:
-//   lid   = kelopak atas turun (ngantuk)
-//   slant = sudut dalam atas dipotong miring (fokus/serius)
-//   happy = bagian bawah dipotong elips -> mata melengkung ^ ^
-// Parameter bergerak halus (lerp) ke target tiap frame, jadi transisi mood mulus.
+// face.cpp — every expression is built from one eye shape (rounded rect) then
+// "cut" with the background color:
+//   lid   = upper eyelid drops (sleepy)
+//   slant = inner top corner cut diagonally (focused/serious)
+//   happy = bottom cut by an ellipse -> curved eyes ^ ^
+// Parameters ease (lerp) toward the target every frame, so mood transitions are smooth.
 #include "face.h"
 
 #include <Arduino.h>
@@ -11,13 +11,13 @@
 #include "board.h"
 
 struct FaceParams {
-  float open = 1;   // tinggi mata relatif (blink pakai faktor terpisah)
+  float open = 1;   // relative eye height (blink uses a separate factor)
   float lookX = 0;  // -1..1
   float lookY = 0;
-  float lid = 0;    // 0..1 bagian atas yang tertutup
+  float lid = 0;    // 0..1 of the top that is covered
   float slant = 0;  // 0..1
   float happy = 0;  // 0..1
-  float size = 1;   // skala mata (kaget = lebih besar)
+  float size = 1;   // eye scale (surprised = bigger)
 };
 
 static FaceParams cur, target;
@@ -66,24 +66,24 @@ void faceLook(float x, float y, uint32_t holdMs) {
 }
 
 void faceUpdate(uint32_t now) {
-  // Blink otomatis (tidak saat tidur — mata sudah hampir tertutup)
+  // Auto blink (not while asleep — eyes are nearly closed already)
   if (mood != Mood::Sleepy && (int32_t)(now - nextBlinkMs) >= 0) {
     blinkStartMs = now;
     if (doubleBlink) {
       doubleBlink = false;
       nextBlinkMs = now + random(2500, 6000);
     } else {
-      doubleBlink = random(100) < 20;  // 20% kedip dua kali
+      doubleBlink = random(100) < 20;  // 20% double blink
       nextBlinkMs = now + (doubleBlink ? 260 : random(2500, 6000));
     }
   }
   blinkOpen = 1;
   if (blinkStartMs && now - blinkStartMs < BLINK_MS) {
     float t = (float)(now - blinkStartMs) / BLINK_MS;
-    blinkOpen = 1 - sinf(t * PI);  // tutup lalu buka
+    blinkOpen = 1 - sinf(t * PI);  // close then open
   }
 
-  // Lirik ke sana-sini saat santai
+  // Glance around when relaxed
   if (mood == Mood::Neutral && (int32_t)(now - lookHoldUntil) >= 0 &&
       (int32_t)(now - nextLookMs) >= 0) {
     bool center = random(100) < 35;
@@ -92,7 +92,7 @@ void faceUpdate(uint32_t now) {
     nextLookMs = now + random(1200, 4000);
   }
 
-  // Tidur: kelopak naik-turun pelan seperti napas
+  // Asleep: eyelids rise and fall slowly like breathing
   if (mood == Mood::Sleepy) target.lid = 0.74f + 0.06f * sinf(now * 0.0018f);
 
   const float k = 0.22f, kLook = 0.32f;
@@ -113,7 +113,7 @@ static void drawEye(TFT_eSprite &spr, int side, int cx, int cy, float scale) {
 
   float ecx = cx + side * (gap / 2 + w / 2) + cur.lookX * LOOK_RANGE_X * scale;
   float ecy = cy + cur.lookY * LOOK_RANGE_Y * scale;
-  // Mata yang searah lirikan sedikit lebih besar -> efek 3D sederhana
+  // The eye on the glance side is slightly bigger -> simple 3D effect
   float persp = 1 + 0.08f * cur.lookX * side;
   w *= persp;
   h *= persp;

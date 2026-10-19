@@ -1,4 +1,4 @@
-// buzzer.cpp — passive buzzer pakai LEDC tone, active buzzer pakai on/off.
+// buzzer.cpp — passive buzzer uses LEDC tone, active buzzer uses on/off.
 #include "buzzer.h"
 
 #include <Arduino.h>
@@ -23,8 +23,8 @@ static uint32_t noteEndMs = 0;
 
 static void toneOn(uint16_t freq) {
 #if BUZZER_PASSIVE
-  ledcWriteTone(BUZZER_PWM_CH, freq);   // set frekuensi (duty 50%)
-  ledcWrite(BUZZER_PWM_CH, BUZZER_DUTY);  // kecilkan duty: arus puncak lebih kecil
+  ledcWriteTone(BUZZER_PWM_CH, freq);   // set frequency (50% duty)
+  ledcWrite(BUZZER_PWM_CH, BUZZER_DUTY);  // lower duty: smaller peak current
 #else
   (void)freq;
   digitalWrite(PIN_BUZZER, BUZZER_ACTIVE_LOW ? LOW : HIGH);
@@ -35,7 +35,7 @@ static void toneOff() {
 #if BUZZER_PASSIVE
   ledcWriteTone(BUZZER_PWM_CH, 0);
 #endif
-  // Pastikan pin di level "diam" (penting untuk modul active-low)
+  // Make sure the pin is at its "silent" level (matters for active-low modules)
 #if BUZZER_PASSIVE && BUZZER_ACTIVE_LOW
   ledcWrite(BUZZER_PWM_CH, 255);
 #elif !BUZZER_PASSIVE
@@ -50,7 +50,7 @@ static void startNote() {
 }
 
 void buzzerInit() {
-  if (!BUZZER_ENABLED) return;  // pin dibiarkan input (high-Z)
+  if (!BUZZER_ENABLED) return;  // pin left as input (high-Z)
 #if BUZZER_PASSIVE
   ledcSetup(BUZZER_PWM_CH, 2000, 8);
   ledcAttachPin(PIN_BUZZER, BUZZER_PWM_CH);

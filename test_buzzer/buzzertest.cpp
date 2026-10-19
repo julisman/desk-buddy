@@ -1,8 +1,8 @@
-// buzzertest.cpp — tes buzzer di GPIO 15, berulang:
-//   1) pin HIGH 1 detik  -> active buzzer bunyi "beep" (passive cuma "klik")
-//   2) diam 1 detik
-//   3) nada 1 kHz 1 detik -> passive buzzer bunyi "tuut"
-//   4) diam 1 detik
+// buzzertest.cpp — buzzer test on GPIO 15, repeating:
+//   1) pin HIGH for 1 s   -> active buzzer goes "beep" (passive only "clicks")
+//   2) silent for 1 s
+//   3) 1 kHz tone for 1 s -> passive buzzer goes "toot"
+//   4) silent for 1 s
 // Flash: pio run -e buzzertest -t upload
 #include <Arduino.h>
 #include <esp32-hal-log.h>
@@ -22,7 +22,7 @@ void loop() {
   digitalWrite(PIN_BUZZER, LOW);
   delay(1000);
 
-  log_printf("[buzzertest] 2) nada 1 kHz (passive buzzer)\n");
+  log_printf("[buzzertest] 2) 1 kHz tone (passive buzzer)\n");
   ledcSetup(CH, 1000, 8);
   ledcAttachPin(PIN_BUZZER, CH);
   ledcWriteTone(CH, 1000);

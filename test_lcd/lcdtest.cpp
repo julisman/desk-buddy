@@ -1,5 +1,5 @@
-// lcdtest.cpp — tes display terpisah pakai Adafruit ST7789 (bukan TFT_eSPI).
-// Layar ganti warna terus: merah, hijau, biru, putih (1 detik). Pin sama dengan firmware utama.
+// lcdtest.cpp — standalone display test using Adafruit ST7789 (not TFT_eSPI).
+// Screen keeps cycling colors: red, green, blue, white (1 s each). Same pins as the main firmware.
 // Flash: pio run -e lcdtest -t upload
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7789.h>
@@ -17,13 +17,13 @@ void setup() {
   digitalWrite(PIN_BL, HIGH);
   spi.begin(PIN_SCLK, -1, PIN_MOSI, PIN_CS);
   tft.init(240, 280);
-  tft.setSPISpeed(10000000);  // 10 MHz, sangat konservatif
-  log_printf("[lcdtest] init selesai, mulai siklus warna\n");
+  tft.setSPISpeed(10000000);  // 10 MHz, very conservative
+  log_printf("[lcdtest] init done, starting color cycle\n");
 }
 
 void loop() {
   static const uint16_t colors[] = {ST77XX_RED, ST77XX_GREEN, ST77XX_BLUE, ST77XX_WHITE};
-  static const char *names[] = {"merah", "hijau", "biru", "putih"};
+  static const char *names[] = {"red", "green", "blue", "white"};
   for (int i = 0; i < 4; i++) {
     tft.fillScreen(colors[i]);
     log_printf("[lcdtest] %s\n", names[i]);

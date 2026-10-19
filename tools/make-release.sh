@@ -1,11 +1,11 @@
 #!/bin/bash
-# Bikin file firmware untuk web installer (docs/):
-#   1. build env desk-buddy-release (tanpa secrets.h)
-#   2. gabung bootloader + partisi + app jadi satu .bin (flash di offset 0)
-#   3. tulis docs/manifest.json untuk ESP Web Tools
+# Build the firmware file for the web installer (docs/):
+#   1. build env desk-buddy-release (without secrets.h)
+#   2. merge bootloader + partitions + app into one .bin (flashed at offset 0)
+#   3. write docs/manifest.json for ESP Web Tools
 #
 #   tools/make-release.sh
-# Versi diambil dari APP_VERSION di src/desk_buddy/app_config.h.
+# Version is taken from APP_VERSION in src/desk_buddy/app_config.h.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -16,15 +16,15 @@ BOOT_APP0="$HOME/.platformio/packages/framework-arduinoespressif32/tools/partiti
 BUILD=.pio/build/desk-buddy-release
 
 VERSION=$(sed -nE 's/^#define APP_VERSION +"([^"]+)".*/\1/p' src/desk_buddy/app_config.h)
-[ -n "$VERSION" ] || { echo "APP_VERSION tidak ketemu" >&2; exit 1; }
+[ -n "$VERSION" ] || { echo "APP_VERSION not found" >&2; exit 1; }
 
 "$PIO" run -e desk-buddy-release
 
-# Jaga-jaga: file publik tidak boleh berisi WiFi developer
+# Safety check: public files must not contain the developer's WiFi
 if [ -f src/secrets.h ]; then
   ssid=$(sed -nE 's/^#define WIFI_SSID +"([^"]+)".*/\1/p' src/secrets.h)
   if [ -n "$ssid" ] && grep -aq "$ssid" "$BUILD/firmware.bin"; then
-    echo "STOP: firmware berisi SSID dari secrets.h" >&2
+    echo "STOP: firmware contains the SSID from secrets.h" >&2
     exit 1
   fi
 fi
@@ -52,6 +52,6 @@ cat > docs/manifest.json <<EOF
 }
 EOF
 
-# File versi lama tidak dipakai lagi oleh manifest
+# Old version files are no longer used by the manifest
 find docs/firmware -name 'deskbuddy-*.bin' ! -name "deskbuddy-$VERSION.bin" -delete
 echo "OK: $OUT ($(du -h "$OUT" | cut -f1)), docs/manifest.json -> v$VERSION"
